@@ -3,86 +3,144 @@
 <html th:fragment="layout (template, menu)" xmlns:th="https://www.thymeleaf.org">
 
 <head>
-
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" type="image/x-icon" th:href="@{/resources/images/favicon.png}">
-  <title th:text="#{layoutTitle}">PetClinic :: a Spring Framework demonstration</title>
+  <title th:text="#{layoutTitle}">Cabinet de Traduction — Togo</title>
   <link th:href="@{/webjars/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/resources/css/petclinic.css}" />
-
+  <link rel="stylesheet" th:href="@{/resources/css/petclinic.css}"/>
+  <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
 </head>
 
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark" role="navigation">
+  <!-- ── NAVBAR ─────────────────────────────────────────────── -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
     <div class="container-fluid">
-      <a class="navbar-brand" th:href="@{/}"><span></span></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar">
+
+      <!-- Brand -->
+      <a class="navbar-brand fw-bold" th:href="@{/}">
+        <span class="fa fa-language me-2"></span>
+        <span th:text="#{site.name}">Cabinet Traduction Togo</span>
+      </a>
+
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#main-navbar"
+              aria-controls="main-navbar" aria-expanded="false"
+              aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="main-navbar" style>
 
+      <div class="collapse navbar-collapse" id="main-navbar">
+
+        <!-- Fragment menuItem réutilisable -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0" th:remove="all">
-
           <li th:fragment="menuItem (link,active,title,glyph,text)" th:class="nav-item">
-            <a th:class="${active==menu ? 'nav-link active' : 'nav-link'}" th:href="@{__${link}__}" th:title="${title}">
-              <span th:class="'fa fa-'+${glyph}" class="fa fa-home"></span>
-              <span th:text="${text}">Template</span>
+            <a th:class="${active==menu ? 'nav-link active' : 'nav-link'}"
+               th:href="@{__${link}__}" th:title="${title}">
+              <span th:class="'fa fa-'+${glyph}"></span>
+              <span th:text="${text}">Menu</span>
             </a>
           </li>
-
         </ul>
 
+        <!-- Liens principaux -->
         <ul class="nav navbar-nav me-auto">
-
-          <li th:replace="~{::menuItem ('/','home','home page','home',#{home})}">
-            <span class="fa fa-home" aria-hidden="true"></span>
-            <span th:text="#{home}">Home</span>
-          </li>
-
-          <li th:replace="~{::menuItem ('/owners/find','owners','find owners','search',#{findOwners})}">
-            <span class="fa fa-search" aria-hidden="true"></span>
-            <span th:text="#{findOwners}">Find owners</span>
-          </li>
-
-          <li th:replace="~{::menuItem ('/vets.html','vets','veterinarians','th-list',#{vets})}">
-            <span class="fa fa-th-list" aria-hidden="true"></span>
-            <span th:text="#{vets}">Veterinarians</span>
-          </li>
-
-          <li
-            th:replace="~{::menuItem ('/oups','error','trigger a RuntimeException to see how it is handled','exclamation-triangle',#{error})}">
-            <span class="fa exclamation-triangle" aria-hidden="true"></span>
-            <span th:text="#{error}">Error</span>
-          </li>
-
+          <li th:replace="~{::menuItem ('/','home',#{nav.home},'home',#{nav.home})}"></li>
+          <li th:replace="~{::menuItem ('/devis','devis',#{nav.devis},'file-text',#{nav.devis})}"></li>
+          <li th:replace="~{::menuItem ('/vets.html','vets',#{nav.services},'th-list',#{nav.services})}"></li>
+          <li th:replace="~{::menuItem ('/oups','error','Error','exclamation-triangle','Error')}"></li>
         </ul>
+
+        <!-- Sélecteur de langue -->
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/(lang=fr)}" title="Français">🇫🇷 FR</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/(lang=en)}" title="English">🇬🇧 EN</a>
+          </li>
+        </ul>
+
       </div>
     </div>
   </nav>
-  <div class="container-fluid">
-    <div class="container xd-container">
 
-      <th:block th:insert="${template}" />
+  <!-- ── CONTENU PRINCIPAL ────────────────────────────────────── -->
+  <div class="container-fluid px-0">
+    <div class="container xd-container py-3">
+      <th:block th:insert="${template}"/>
+    </div>
+  </div>
 
-      <br />
-      <br />
-      <div class="container">
-        <div class="row">
-          <div class="col-12 text-center">
-            <img src="../static/images/spring-logo.svg" th:src="@{/resources/images/spring-logo.svg}"
-              alt="VMware Tanzu Logo" class="logo">
-          </div>
+  <!-- ── FOOTER ───────────────────────────────────────────────── -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row text-center text-md-start g-3">
+        <div class="col-12 col-md-4">
+          <h6 class="fw-bold" th:text="#{site.name}">Cabinet Traduction Togo</h6>
+          <p class="small mb-0">
+            <span class="fa fa-map-marker me-1"></span>
+            <span th:text="#{footer.address}">Lomé, Togo</span>
+          </p>
+        </div>
+        <div class="col-12 col-md-4 text-center">
+          <p class="small mb-1">
+            <span class="fa fa-phone me-1"></span>
+            <span th:text="#{footer.phone}">+228 XX XX XX XX</span>
+          </p>
+          <p class="small mb-0">
+            <span class="fa fa-envelope me-1"></span>
+            <span th:text="#{footer.email}">contact@cabinet-traduction.tg</span>
+          </p>
+        </div>
+        <div class="col-12 col-md-4 text-center text-md-end">
+          <p class="small mb-0">
+            &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span>
+            <span th:text="#{site.name}">Cabinet Traduction Togo</span>.
+            <span th:text="#{footer.rights}">Tous droits réservés</span>.
+          </p>
         </div>
       </div>
     </div>
-  </div>
+  </footer>
+
+  <!-- ── BOUTON WHATSAPP FLOTTANT ──────────────────────────────
+       Variable Thymeleaf ${whatsappMessage} modifiable par page.
+       Valeur par défaut : message générique.
+  ─────────────────────────────────────────────────────────────── -->
+  <a id="whatsapp-float"
+     th:href="'https://wa.me/228XXXXXXXX?text=' + ${whatsappMessage != null ? whatsappMessage : 'Bonjour, je souhaite des informations sur vos services de traduction.'}"
+     target="_blank"
+     rel="noopener noreferrer"
+     aria-label="Contacter via WhatsApp"
+     style="
+       position: fixed;
+       bottom: 24px;
+       right: 24px;
+       z-index: 1050;
+       background-color: #25D366;
+       color: #fff;
+       border-radius: 50px;
+       padding: 12px 20px;
+       font-size: 1rem;
+       font-weight: 600;
+       text-decoration: none;
+       box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+       display: flex;
+       align-items: center;
+       gap: 8px;
+       transition: transform 0.2s;
+     "
+     onmouseover="this.style.transform='scale(1.07)'"
+     onmouseout="this.style.transform='scale(1)'">
+    <span class="fa fa-whatsapp fa-lg"></span>
+    <span class="d-none d-sm-inline">WhatsApp</span>
+  </a>
 
   <script th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
 
 </body>
-
 </html>

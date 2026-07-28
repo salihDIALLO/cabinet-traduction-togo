@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'devis')}">
+<body>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-7">
+
+      <!-- Titre -->
+      <h2 class="fw-bold mb-1 text-center" th:text="#{devis.page.title}">Demande de Devis</h2>
+
+      <!-- Barre de progression -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between mb-1">
+          <small class="text-muted" id="step-label">Étape 1 sur 3</small>
+          <small class="text-muted" id="step-pct">33%</small>
+        </div>
+        <div class="progress" style="height:6px;">
+          <div id="progress-bar" class="progress-bar bg-success"
+               role="progressbar" style="width:33%"></div>
+        </div>
+        <!-- Indicateurs d'étapes -->
+        <div class="d-flex justify-content-between mt-2">
+          <span class="badge rounded-pill step-dot bg-success" id="dot-1">1</span>
+          <span class="badge rounded-pill step-dot bg-secondary" id="dot-2">2</span>
+          <span class="badge rounded-pill step-dot bg-secondary" id="dot-3">3</span>
+        </div>
+      </div>
+
+      <!-- Message succès (masqué par défaut) -->
+      <div id="success-card" class="card border-success d-none text-center p-4 mb-4">
+        <div class="card-body">
+          <span class="fa fa-check-circle fa-4x text-success mb-3"></span>
+          <h4 class="fw-bold" th:text="#{devis.success.title}">Envoyé !</h4>
+          <p id="success-msg" class="text-muted"></p>
+          <a id="whatsapp-suivi" href="#" class="btn btn-success mt-2">
+            <span class="fa fa-whatsapp me-2"></span>
+            <span th:text="#{devis.success.whatsapp}">Suivre sur WhatsApp</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Formulaire -->
+      <form id="devis-form" novalidate>
+
+        <!-- ══ ÉTAPE 1 — Informations personnelles ══════════ -->
+        <div class="step" id="step-1">
+          <h5 class="fw-semibold mb-3" th:text="#{devis.step1.title}">Vos informations</h5>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.nom}">Nom complet</label>
+            <input type="text" class="form-control" name="nom" id="nom"
+                   th:placeholder="#{devis.placeholder.nom}" required>
+            <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.email}">Email</label>
+            <input type="email" class="form-control" name="email" id="email"
+                   th:placeholder="#{devis.placeholder.email}" required>
+            <div class="invalid-feedback" th:text="#{error.email}">Email invalide.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.telephone}">Téléphone</label>
+            <input type="tel" class="form-control" name="telephone" id="telephone"
+                   th:placeholder="#{devis.placeholder.telephone}" required>
+            <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.typeClient}">Vous êtes</label>
+            <select class="form-select" name="typeClient" id="typeClient" required>
+              <option value="">—</option>
+              <option value="ETUDIANT"   th:text="#{devis.typeClient.ETUDIANT}">Étudiant</option>
+              <option value="PARTICULIER" th:text="#{devis.typeClient.PARTICULIER}">Particulier</option>
+              <option value="ENTREPRISE" th:text="#{devis.typeClient.ENTREPRISE}">Entreprise</option>
+              <option value="ONG"        th:text="#{devis.typeClient.ONG}">ONG</option>
+            </select>
+            <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+          </div>
+        </div>
+
+        <!-- ══ ÉTAPE 2 — Détails de la demande ══════════════ -->
+        <div class="step d-none" id="step-2">
+          <h5 class="fw-semibold mb-3" th:text="#{devis.step2.title}">Votre demande</h5>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.service}">Service</label>
+            <select class="form-select" name="serviceId" id="serviceId" required>
+              <option value="">—</option>
+              <option value="1" th:text="#{service.TRADUCTION_CERTIFIEE}">Traduction Certifiée</option>
+              <option value="2" th:text="#{service.TRADUCTION_ASSERMENTEE}">Traduction Assermentée</option>
+              <option value="3" th:text="#{service.INTERPRETATION}">Interprétation</option>
+              <option value="4" th:text="#{service.LOCATION_EQUIPEMENT}">Location Équipement</option>
+            </select>
+            <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+          </div>
+
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label fw-semibold" th:text="#{devis.label.langueSource}">Langue source</label>
+              <input type="text" class="form-control" name="langueSource" id="langueSource"
+                     placeholder="ex: Français" required>
+              <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label fw-semibold" th:text="#{devis.label.langueCible}">Langue cible</label>
+              <input type="text" class="form-control" name="langueCible" id="langueCible"
+                     placeholder="ex: Anglais" required>
+              <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.description}">Description</label>
+            <textarea class="form-control" name="description" id="description" rows="4"
+                      th:placeholder="#{devis.placeholder.description}"></textarea>
+          </div>
+        </div>
+
+        <!-- ══ ÉTAPE 3 — Documents ═══════════════════════════ -->
+        <div class="step d-none" id="step-3">
+          <h5 class="fw-semibold mb-3" th:text="#{devis.step3.title}">Vos documents</h5>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.fichiers}">Documents joints</label>
+            <div id="drop-zone"
+                 class="border border-2 border-dashed rounded p-4 text-center text-muted"
+                 style="cursor:pointer; border-style: dashed !important;">
+              <span class="fa fa-cloud-upload fa-2x mb-2 d-block"></span>
+              <span th:text="#{devis.fichiers.drop}">Glissez ou cliquez</span>
+              <input type="file" id="fichiers" name="fichiers" multiple
+                     accept=".pdf,.jpg,.jpeg,.png,.docx" class="d-none">
+            </div>
+            <small class="text-muted" th:text="#{devis.fichiers.hint}">PDF, JPG, PNG, DOCX — max 10 Mo</small>
+            <div id="file-list" class="mt-2"></div>
+            <div id="file-error" class="text-danger small mt-1"></div>
+          </div>
+
+          <!-- Barre upload -->
+          <div id="upload-progress" class="d-none mb-3">
+            <label class="form-label small">Upload en cours...</label>
+            <div class="progress">
+              <div id="upload-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                   role="progressbar" style="width:0%"></div>
+            </div>
+          </div>
+
+          <!-- Erreur serveur -->
+          <div id="server-error" class="alert alert-danger d-none" role="alert"></div>
+        </div>
+
+        <!-- ── Boutons navigation ─────────────────────────── -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" id="btn-prev"
+                  class="btn btn-outline-secondary d-none"
+                  th:text="#{devis.btn.prev}">Précédent</button>
+          <button type="button" id="btn-next"
+                  class="btn btn-primary ms-auto"
+                  th:text="#{devis.btn.next}">Suivant</button>
+          <button type="submit" id="btn-submit"
+                  class="btn btn-success ms-auto d-none">
+            <span class="fa fa-paper-plane me-2"></span>
+            <span th:text="#{devis.btn.submit}">Envoyer</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- JS Formulaire multi-étapes -->
+<script th:src="@{/js/devis-form.js}"></script>
+
+</body>
+</html>
+
+      <!-- Message succès (masqué par défaut) -->
+      <div id="success-card" class="card border-success d-none text-center p-4 mb-4">
+        <div class="card-body">
+          <span class="fa fa-check-circle fa-4x text-success mb-3 d-block"></span>
+          <h4 class="fw-bold" th:text="#{devis.success.title}">Envoyé !</h4>
+          <p id="success-msg" class="text-muted"></p>
+          <a id="whatsapp-suivi" href="#" class="btn btn-success mt-2">
+            <span class="fa fa-whatsapp me-2"></span>
+            <span th:text="#{devis.success.whatsapp}">Suivre sur WhatsApp</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Formulaire multi-étapes -->
+      <form id="devis-form" novalidate>
+
+        <!-- ══ ÉTAPE 1 — Informations ════════════════════════ -->
+        <div class="step" id="step-1">
+          <h5 class="fw-semibold mb-3" th:text="#{devis.step1.title}">Vos informations</h5>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.nom}">Nom complet</label>
+            <input type="text" class="form-control" name="nom" id="nom"
+                   th:placeholder="#{devis.placeholder.nom}" required>
+            <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.email}">Email</label>
+            <input type="email" class="form-control" name="email" id="email"
+                   th:placeholder="#{devis.placeholder.email}" required>
+            <div class="invalid-feedback" th:text="#{error.email}">Email invalide.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.telephone}">Téléphone</label>
+            <input type="tel" class="form-control" name="telephone" id="telephone"
+                   th:placeholder="#{devis.placeholder.telephone}" required>
+            <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.typeClient}">Vous êtes</label>
+            <select class="form-select" name="typeClient" id="typeClient" required>
+              <option value="">—</option>
+              <option value="ETUDIANT"    th:text="#{devis.typeClient.ETUDIANT}">Étudiant</option>
+              <option value="PARTICULIER" th:text="#{devis.typeClient.PARTICULIER}">Particulier</option>
+              <option value="ENTREPRISE"  th:text="#{devis.typeClient.ENTREPRISE}">Entreprise</option>
+              <option value="ONG"         th:text="#{devis.typeClient.ONG}">ONG</option>
+            </select>
+            <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+          </div>
+        </div>
+
+        <!-- ══ ÉTAPE 2 — Demande ═════════════════════════════ -->
+        <div class="step d-none" id="step-2">
+          <h5 class="fw-semibold mb-3" th:text="#{devis.step2.title}">Votre demande</h5>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.service}">Service</label>
+            <select class="form-select" name="serviceId" id="serviceId" required>
+              <option value="">—</option>
+              <option value="1" th:text="#{service.TRADUCTION_CERTIFIEE}">Traduction Certifiée</option>
+              <option value="2" th:text="#{service.TRADUCTION_ASSERMENTEE}">Traduction Assermentée</option>
+              <option value="3" th:text="#{service.INTERPRETATION}">Interprétation</option>
+              <option value="4" th:text="#{service.LOCATION_EQUIPEMENT}">Location Équipement</option>
+            </select>
+            <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label fw-semibold" th:text="#{devis.label.langueSource}">Langue source</label>
+              <input type="text" class="form-control" name="langueSource" id="langueSource"
+                     placeholder="ex: Français" required>
+              <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label fw-semibold" th:text="#{devis.label.langueCible}">Langue cible</label>
+              <input type="text" class="form-control" name="langueCible" id="langueCible"
+                     placeholder="ex: Anglais" required>
+              <div class="invalid-feedback" th:text="#{error.required}">Champ obligatoire.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold" th:text="#{devis.label.description}">Description</label>
+            <textarea class="form-control" name="description" id="description" rows="4"
+                      th:placeholder="#{devis.placeholder.description}"></textarea>
+          </div>
+        </div>
+
+        <!-- ══ ÉTAPE 3 — Documents ═══════════════════════════ -->
+        <div class="step d-none" id="step-3">
+          <h5 class="fw-semibold mb-3" th:text="#{devis.step3.title}">Vos documents</h5>
+
+          <div id="drop-zone"
+               class="border border-2 rounded p-4 text-center text-muted mb-2"
+               style="cursor:pointer; border-style: dashed !important;">
+            <span class="fa fa-cloud-upload fa-2x d-block mb-2"></span>
+            <span th:text="#{devis.fichiers.drop}">Glissez ou cliquez</span>
+            <input type="file" id="fichiers" name="fichiers" multiple
+                   accept=".pdf,.jpg,.jpeg,.png,.docx" class="d-none">
+          </div>
+          <small class="text-muted d-block mb-2" th:text="#{devis.fichiers.hint}">PDF, JPG, PNG, DOCX</small>
+          <div id="file-list" class="mb-2"></div>
+          <div id="file-error" class="text-danger small"></div>
+
+          <div id="upload-progress" class="d-none mt-3">
+            <label class="form-label small">Upload en cours...</label>
+            <div class="progress">
+              <div id="upload-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                   role="progressbar" style="width:0%"></div>
+            </div>
+          </div>
+          <div id="server-error" class="alert alert-danger d-none mt-2" role="alert"></div>
+        </div>
+
+        <!-- ── Boutons navigation ─────────────────────────── -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" id="btn-prev"
+                  class="btn btn-outline-secondary d-none"
+                  th:text="#{devis.btn.prev}">Précédent</button>
+          <button type="button" id="btn-next"
+                  class="btn btn-primary ms-auto"
+                  th:text="#{devis.btn.next}">Suivant</button>
+          <button type="submit" id="btn-submit"
+                  class="btn btn-success ms-auto d-none">
+            <span class="fa fa-paper-plane me-2"></span>
+            <span th:text="#{devis.btn.submit}">Envoyer</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/devis-form.js}"></script>
+
+</body>
+</html>
