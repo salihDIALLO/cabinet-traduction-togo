@@ -46,3 +46,6 @@ out/
 _site/
 *.css
 !petclinic.css
+
+# Variables d'environnement locales — NE JAMAIS COMMITTER
+.env
