@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
 <html th:fragment="layout (template, menu)" xmlns:th="https://www.thymeleaf.org">
-
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta charset="utf-8">
@@ -10,57 +8,63 @@
   <link rel="shortcut icon" type="image/x-icon" th:href="@{/resources/images/favicon.png}">
   <title th:text="#{layoutTitle}">Cabinet de Traduction — Togo</title>
   <link th:href="@{/webjars/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/resources/css/petclinic.css}"/>
   <link rel="stylesheet" th:href="@{/css/cabinet.css}"/>
 </head>
-
 <body>
 
-  <!-- ── NAVBAR ─────────────────────────────────────────────── -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
-    <div class="container-fluid">
+  <!-- ── BARRE URGENCE ─────────────────────────────────────── -->
+  <div class="topbar">
+    🔴 <strong>OFFRE LIMITÉE</strong> : Devis gratuit répondu en 30 minutes · Urgences 24h/24 ·
+    <a th:href="'https://wa.me/228XXXXXXXX'" target="_blank">📞 +228 XX XX XX XX</a>
+  </div>
 
-      <!-- Brand -->
-      <a class="navbar-brand fw-bold" th:href="@{/}">
-        <span class="fa fa-language me-2"></span>
-        <span th:text="#{site.name}">Cabinet Traduction Togo</span>
+  <!-- ── NAVBAR ────────────────────────────────────────────── -->
+  <nav class="navbar navbar-expand-lg" role="navigation">
+    <div class="container">
+
+      <a class="navbar-brand" th:href="@{/}">
+        <span style="font-size:1.5rem;">🌐</span>
+        <span>
+          <span th:text="#{site.name}">Cabinet Traduction Togo</span>
+          <small class="brand-sub" th:text="#{site.tagline}">Certifié · Officiel · Togo</small>
+        </span>
       </a>
 
       <button class="navbar-toggler" type="button"
               data-bs-toggle="collapse" data-bs-target="#main-navbar"
-              aria-controls="main-navbar" aria-expanded="false"
-              aria-label="Toggle navigation">
+              aria-expanded="false" aria-label="Menu">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="main-navbar">
 
-        <!-- Fragment menuItem réutilisable -->
+        <!-- Liens internes -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0" th:remove="all">
-          <li th:fragment="menuItem (link,active,title,glyph,text)" th:class="nav-item">
+          <li th:fragment="menuItem (link,active,titleAttr,text)" th:class="nav-item">
             <a th:class="${active==menu ? 'nav-link active' : 'nav-link'}"
-               th:href="@{__${link}__}" th:title="${title}">
-              <span th:class="'fa fa-'+${glyph}"></span>
-              <span th:text="${text}">Menu</span>
+               th:href="@{__${link}__}" th:title="${titleAttr}"
+               th:text="${text}">Menu</a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav me-auto">
+          <li th:replace="~{::menuItem ('/',          'home',  #{nav.home},     #{nav.home})}"></li>
+          <li th:replace="~{::menuItem ('/devis',     'devis', #{nav.devis},    #{nav.devis})}"></li>
+          <li th:replace="~{::menuItem ('/vets.html', 'vets',  #{nav.services}, #{nav.services})}"></li>
+        </ul>
+
+        <!-- Sélecteur langue + CTA -->
+        <ul class="navbar-nav align-items-center gap-1">
+          <li class="nav-item">
+            <a class="nav-link lang-btn" th:href="@{/(lang=fr)}" title="Français">🇫🇷 FR</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link lang-btn" th:href="@{/(lang=en)}" title="English">🇬🇧 EN</a>
+          </li>
+          <li class="nav-item ms-2">
+            <a th:href="@{/devis}" class="nav-link nav-cta">
+              🚀 <span th:text="#{nav.devis}">Devis gratuit</span>
             </a>
-          </li>
-        </ul>
-
-        <!-- Liens principaux -->
-        <ul class="nav navbar-nav me-auto">
-          <li th:replace="~{::menuItem ('/','home',#{nav.home},'home',#{nav.home})}"></li>
-          <li th:replace="~{::menuItem ('/devis','devis',#{nav.devis},'file-text',#{nav.devis})}"></li>
-          <li th:replace="~{::menuItem ('/vets.html','vets',#{nav.services},'th-list',#{nav.services})}"></li>
-          <li th:replace="~{::menuItem ('/oups','error','Error','exclamation-triangle','Error')}"></li>
-        </ul>
-
-        <!-- Sélecteur de langue -->
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{/(lang=fr)}" title="Français">🇫🇷 FR</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{/(lang=en)}" title="English">🇬🇧 EN</a>
           </li>
         </ul>
 
@@ -68,76 +72,77 @@
     </div>
   </nav>
 
-  <!-- ── CONTENU PRINCIPAL ────────────────────────────────────── -->
-  <div class="container-fluid px-0">
-    <div class="container xd-container py-3">
-      <th:block th:insert="${template}"/>
-    </div>
-  </div>
+  <!-- ── CONTENU ───────────────────────────────────────────── -->
+  <th:block th:insert="${template}"/>
 
-  <!-- ── FOOTER ───────────────────────────────────────────────── -->
-  <footer class="bg-dark text-white py-4 mt-5">
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer>
     <div class="container">
-      <div class="row text-center text-md-start g-3">
+      <div class="row g-4">
+
         <div class="col-12 col-md-4">
-          <h6 class="fw-bold" th:text="#{site.name}">Cabinet Traduction Togo</h6>
-          <p class="small mb-0">
-            <span class="fa fa-map-marker me-1"></span>
-            <span th:text="#{footer.address}">Lomé, Togo</span>
+          <h5 th:text="#{site.name}">Cabinet Traduction Togo</h5>
+          <p style="font-size:.82rem; line-height:1.65; margin-bottom:1rem;" th:text="#{footer.about}">
+            Cabinet de traduction certifiée et interprétation à Lomé, Togo.
+            Reconnu officiellement par les ambassades et administrations.
           </p>
+          <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
+            <a href="https://wa.me/228XXXXXXXX" target="_blank"
+               style="background:var(--wa);color:#fff;border-radius:20px;padding:.35rem .85rem;font-size:.78rem;font-weight:700;text-decoration:none;">
+              💬 WhatsApp
+            </a>
+          </div>
         </div>
-        <div class="col-12 col-md-4 text-center">
-          <p class="small mb-1">
-            <span class="fa fa-phone me-1"></span>
-            <span th:text="#{footer.phone}">+228 XX XX XX XX</span>
-          </p>
-          <p class="small mb-0">
-            <span class="fa fa-envelope me-1"></span>
-            <span th:text="#{footer.email}">contact@cabinet-traduction.tg</span>
-          </p>
+
+        <div class="col-6 col-md-2">
+          <h5 style="font-size:.88rem;">Services</h5>
+          <ul style="list-style:none; line-height:2;">
+            <li><a th:href="@{/devis}" th:text="#{service.TRADUCTION_CERTIFIEE}">Traduction Certifiée</a></li>
+            <li><a th:href="@{/devis}" th:text="#{service.TRADUCTION_ASSERMENTEE}">Assermentée</a></li>
+            <li><a th:href="@{/devis}" th:text="#{service.INTERPRETATION}">Interprétation</a></li>
+            <li><a th:href="@{/devis}" th:text="#{service.LOCATION_EQUIPEMENT}">Équipement</a></li>
+          </ul>
         </div>
-        <div class="col-12 col-md-4 text-center text-md-end">
-          <p class="small mb-0">
-            &copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span>
-            <span th:text="#{site.name}">Cabinet Traduction Togo</span>.
-            <span th:text="#{footer.rights}">Tous droits réservés</span>.
-          </p>
+
+        <div class="col-6 col-md-2">
+          <h5 style="font-size:.88rem;">Liens</h5>
+          <ul style="list-style:none; line-height:2;">
+            <li><a th:href="@{/}">Accueil</a></li>
+            <li><a th:href="@{/devis}">Devis gratuit</a></li>
+            <li><a href="#">À propos</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
         </div>
+
+        <div class="col-12 col-md-4">
+          <h5 style="font-size:.88rem;" th:text="#{footer.contact}">Contact</h5>
+          <ul style="list-style:none; line-height:2.1; font-size:.82rem;">
+            <li>📍 <span th:text="#{footer.address}">Lomé, Togo</span></li>
+            <li>📞 <a th:href="'tel:' + #{footer.phone}" th:text="#{footer.phone}">+228 XX XX XX XX</a></li>
+            <li>✉️ <a th:href="'mailto:' + #{footer.email}" th:text="#{footer.email}">contact@cabinet-traduction.tg</a></li>
+            <li>🕐 Lun–Sam : 8h–18h · Urgences 24h/24</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <hr class="footer-divider"/>
+      <div class="footer-bottom">
+        &copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span>
+        <span th:text="#{site.name}">Cabinet Traduction Togo</span> —
+        <span th:text="#{footer.rights}">Tous droits réservés</span>
+        · <a href="#" th:text="#{footer.legal}">Mentions légales</a>
       </div>
     </div>
   </footer>
 
-  <!-- ── BOUTON WHATSAPP FLOTTANT ──────────────────────────────
-       Variable Thymeleaf ${whatsappMessage} modifiable par page.
-       Valeur par défaut : message générique.
-  ─────────────────────────────────────────────────────────────── -->
+  <!-- ── BOUTON WHATSAPP FLOTTANT ──────────────────────────── -->
   <a id="whatsapp-float"
-     th:href="'https://wa.me/228XXXXXXXX?text=' + ${whatsappMessage != null ? whatsappMessage : 'Bonjour, je souhaite des informations sur vos services de traduction.'}"
-     target="_blank"
-     rel="noopener noreferrer"
-     aria-label="Contacter via WhatsApp"
-     style="
-       position: fixed;
-       bottom: 24px;
-       right: 24px;
-       z-index: 1050;
-       background-color: #25D366;
-       color: #fff;
-       border-radius: 50px;
-       padding: 12px 20px;
-       font-size: 1rem;
-       font-weight: 600;
-       text-decoration: none;
-       box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-       display: flex;
-       align-items: center;
-       gap: 8px;
-       transition: transform 0.2s;
-     "
-     onmouseover="this.style.transform='scale(1.07)'"
-     onmouseout="this.style.transform='scale(1)'">
-    <span class="fa fa-whatsapp fa-lg"></span>
-    <span class="d-none d-sm-inline">WhatsApp</span>
+     th:href="'https://wa.me/228XXXXXXXX?text=' + ${whatsappMessage != null ? whatsappMessage : 'Bonjour, je souhaite un devis pour une traduction certifiée.'}"
+     target="_blank" rel="noopener noreferrer"
+     aria-label="Contacter via WhatsApp">
+    <span style="font-size:1.3rem;">💬</span>
+    <span class="wa-label" th:text="#{home.hero.cta.whatsapp}">WhatsApp</span>
   </a>
 
   <script th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>

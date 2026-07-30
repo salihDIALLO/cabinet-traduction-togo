@@ -1,144 +1,267 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org"
       th:replace="~{fragments/layout :: layout (~{::body},'home')}">
-
 <body>
 
-  <!-- ── HERO ─────────────────────────────────────────────── -->
-  <section class="hero-section py-5 text-white text-center"
-           style="background: linear-gradient(135deg, #1a3c5e 0%, #2e7d32 100%); min-height: 60vh; display:flex; align-items:center;">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-9">
-          <h1 class="display-5 fw-bold mb-3" th:text="#{home.hero.title}">
-            Traduction Certifiée &amp; Interprétation au Togo
-          </h1>
-          <p class="lead mb-4" th:text="#{home.hero.subtitle}">
-            Documents officiels traduits et certifiés pour vos démarches.
-          </p>
-          <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-            <a th:href="@{/devis}" class="btn btn-warning btn-lg fw-bold">
-              <span class="fa fa-file-text me-2"></span>
-              <span th:text="#{home.hero.cta}">Demander un devis gratuit</span>
-            </a>
-            <a th:href="'https://wa.me/228XXXXXXXX?text=' + #{home.hero.cta.whatsapp}"
-               class="btn btn-outline-light btn-lg"
-               target="_blank" rel="noopener noreferrer">
-              <span class="fa fa-whatsapp me-2"></span>
-              <span th:text="#{home.hero.cta.whatsapp}">WhatsApp</span>
-            </a>
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="row align-items-center g-4">
+
+      <!-- Texte gauche -->
+      <div class="col-12 col-lg-6">
+        <div class="hero-badge">✅ N°1 Togo · Certifié · 500+ clients</div>
+        <h1>
+          Votre document<br>
+          <em th:text="#{home.hero.title.em}">traduit, certifié,</em><br>
+          <span th:text="#{home.hero.title.end}">accepté partout.</span>
+        </h1>
+        <p th:text="#{home.hero.subtitle}">
+          Ambassades, Campus France, universités, consulats — nos traductions certifiées
+          sont reconnues officiellement. Devis gratuit, livraison express possible.
+        </p>
+        <div class="hero-flags">
+          <span>🇺🇸 Ambassade USA</span>
+          <span>🇨🇦 Canada</span>
+          <span>🎓 Campus France</span>
+          <span>🇬🇧 UK Visa</span>
+          <span>🇩🇪 Allemagne</span>
+          <span>🇧🇪 Belgique</span>
+          <span>⚡ Express 24h</span>
+        </div>
+        <div class="d-flex flex-wrap gap-3">
+          <a th:href="@{/devis}" class="btn-hero-primary">
+            🚀 <span th:text="#{home.hero.cta}">Devis Gratuit en 30 min</span>
+          </a>
+          <a th:href="'https://wa.me/228XXXXXXXX?text=' + #{home.hero.cta.whatsapp}"
+             class="btn-hero-wa" target="_blank" rel="noopener noreferrer">
+            💬 WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <!-- Formulaire rapide droite -->
+      <div class="col-12 col-lg-5 offset-lg-1">
+        <div class="hero-form-card">
+          <h3>🚀 Devis Gratuit en 30 min</h3>
+          <p>Gratuit · Sans engagement · Réponse garantie</p>
+          <form action="/devis" method="get">
+            <input type="text" name="nom" placeholder="Votre nom complet"/>
+            <input type="email" name="email" placeholder="Votre adresse email"/>
+            <input type="tel" name="telephone" placeholder="Votre téléphone (+228...)"/>
+            <select name="serviceId">
+              <option value="">Choisir un service...</option>
+              <option value="1" th:text="#{service.TRADUCTION_CERTIFIEE}">Traduction Certifiée</option>
+              <option value="2" th:text="#{service.TRADUCTION_ASSERMENTEE}">Traduction Assermentée</option>
+              <option value="3" th:text="#{service.INTERPRETATION}">Interprétation</option>
+              <option value="4" th:text="#{service.LOCATION_EQUIPEMENT}">Location Équipement</option>
+            </select>
+            <button type="submit" class="btn-form-submit">
+              Recevoir mon devis →
+            </button>
+          </form>
+          <div class="form-trust">
+            <span>🔒 Confidentiel</span>
+            <span>⚡ 30 min chrono</span>
+            <span>🚫 0 engagement</span>
           </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ TRUST BAR ══════════════════════════════════════════════ -->
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-items">
+      <div class="trust-item"><span>🔒</span><span>Confidentialité garantie</span></div>
+      <div class="trust-item"><span>📜</span><span>Traducteurs certifiés officiels</span></div>
+      <div class="trust-item"><span>⚡</span><span>Livraison express 24h</span></div>
+      <div class="trust-item"><span>🌍</span><span>15+ pays desservis</span></div>
+      <div class="trust-item"><span>⭐</span><span>4.9/5 · Google</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STATS ══════════════════════════════════════════════════ -->
+<section class="stats-section">
+  <div class="container">
+    <div class="row g-3">
+      <div class="col-6 col-md-3">
+        <div class="stat-box">
+          <div class="stat-number" data-count="500">0</div>
+          <div class="stat-label">Clients satisfaits</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-box">
+          <div class="stat-number" data-count="5">0</div>
+          <div class="stat-label">Ans d'expérience</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-box">
+          <div class="stat-number" data-count="10">0</div>
+          <div class="stat-label">Langues disponibles</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-box">
+          <div class="stat-number">4.9★</div>
+          <div class="stat-label">Note Google</div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── SERVICES ──────────────────────────────────────────── -->
-  <section class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center fw-bold mb-5" th:text="#{home.services.title}">Nos Services</h2>
-      <div class="row g-4">
-
-        <div class="col-12 col-sm-6 col-lg-3">
-          <div class="card h-100 border-0 shadow-sm text-center p-3">
-            <div class="card-body">
-              <div class="mb-3">
-                <span class="fa fa-certificate fa-3x" style="color:#1a3c5e;"></span>
-              </div>
-              <h5 class="card-title fw-bold" th:text="#{service.TRADUCTION_CERTIFIEE}">
-                Traduction Certifiée
-              </h5>
-              <p class="card-text text-muted small" th:text="#{service.TRADUCTION_CERTIFIEE.desc}">
-                Documents administratifs et juridiques.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-sm-6 col-lg-3">
-          <div class="card h-100 border-0 shadow-sm text-center p-3">
-            <div class="card-body">
-              <div class="mb-3">
-                <span class="fa fa-gavel fa-3x" style="color:#2e7d32;"></span>
-              </div>
-              <h5 class="card-title fw-bold" th:text="#{service.TRADUCTION_ASSERMENTEE}">
-                Traduction Assermentée
-              </h5>
-              <p class="card-text text-muted small" th:text="#{service.TRADUCTION_ASSERMENTEE.desc}">
-                Traducteurs assermentés.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-sm-6 col-lg-3">
-          <div class="card h-100 border-0 shadow-sm text-center p-3">
-            <div class="card-body">
-              <div class="mb-3">
-                <span class="fa fa-microphone fa-3x" style="color:#c62828;"></span>
-              </div>
-              <h5 class="card-title fw-bold" th:text="#{service.INTERPRETATION}">
-                Interprétation
-              </h5>
-              <p class="card-text text-muted small" th:text="#{service.INTERPRETATION.desc}">
-                Conférences et réunions.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-sm-6 col-lg-3">
-          <div class="card h-100 border-0 shadow-sm text-center p-3">
-            <div class="card-body">
-              <div class="mb-3">
-                <span class="fa fa-headphones fa-3x" style="color:#f57c00;"></span>
-              </div>
-              <h5 class="card-title fw-bold" th:text="#{service.LOCATION_EQUIPEMENT}">
-                Location d'Équipement
-              </h5>
-              <p class="card-text text-muted small" th:text="#{service.LOCATION_EQUIPEMENT.desc}">
-                Matériel d'interprétation.
-              </p>
-            </div>
-          </div>
-        </div>
-
-      </div>
+<!-- ══ SERVICES ═══════════════════════════════════════════════ -->
+<section class="services-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag">🏆 <span th:text="#{home.services.title}">Nos Services</span></div>
+      <h2 class="section-title" th:text="#{home.services.subtitle}">Ce que nous faisons</h2>
     </div>
-  </section>
+    <div class="row g-4">
 
-  <!-- ── POURQUOI NOUS ──────────────────────────────────────── -->
-  <section class="py-5">
-    <div class="container">
-      <h2 class="text-center fw-bold mb-5" th:text="#{home.why.title}">Pourquoi nous choisir ?</h2>
-      <div class="row g-3 justify-content-center">
-        <div class="col-12 col-sm-6 col-lg-3 text-center">
-          <span class="fa fa-check-circle fa-2x mb-2" style="color:#2e7d32;"></span>
-          <p class="fw-semibold" th:text="#{home.why.certified}">Traducteurs certifiés</p>
-        </div>
-        <div class="col-12 col-sm-6 col-lg-3 text-center">
-          <span class="fa fa-bolt fa-2x mb-2" style="color:#f57c00;"></span>
-          <p class="fw-semibold" th:text="#{home.why.fast}">Délais rapides</p>
-        </div>
-        <div class="col-12 col-sm-6 col-lg-3 text-center">
-          <span class="fa fa-globe fa-2x mb-2" style="color:#1a3c5e;"></span>
-          <p class="fw-semibold" th:text="#{home.why.languages}">10+ langues</p>
-        </div>
-        <div class="col-12 col-sm-6 col-lg-3 text-center">
-          <span class="fa fa-lock fa-2x mb-2" style="color:#c62828;"></span>
-          <p class="fw-semibold" th:text="#{home.why.secure}">Documents sécurisés</p>
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="service-card">
+          <div class="service-ico">📜</div>
+          <h3 th:text="#{service.TRADUCTION_CERTIFIEE}">Traduction Certifiée</h3>
+          <p th:text="#{service.TRADUCTION_CERTIFIEE.desc}">Documents administratifs et juridiques.</p>
+          <div class="service-price" th:text="#{service.TRADUCTION_CERTIFIEE.price}">À partir de 5 000 XOF</div>
         </div>
       </div>
 
-      <!-- CTA centré -->
-      <div class="text-center mt-5">
-        <a th:href="@{/devis}" class="btn btn-primary btn-lg px-5">
-          <span class="fa fa-paper-plane me-2"></span>
-          <span th:text="#{home.hero.cta}">Demander un devis gratuit</span>
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="service-card">
+          <div class="service-ico">⚖️</div>
+          <h3 th:text="#{service.TRADUCTION_ASSERMENTEE}">Traduction Assermentée</h3>
+          <p th:text="#{service.TRADUCTION_ASSERMENTEE.desc}">Tribunal, notaire, préfecture.</p>
+          <div class="service-price" th:text="#{service.TRADUCTION_ASSERMENTEE.price}">À partir de 8 000 XOF</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="service-card">
+          <div class="service-ico">🎙️</div>
+          <h3 th:text="#{service.INTERPRETATION}">Interprétation</h3>
+          <p th:text="#{service.INTERPRETATION.desc}">Conférences, réunions, audiences.</p>
+          <div class="service-price" th:text="#{service.INTERPRETATION.price}">Sur devis</div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="service-card">
+          <div class="service-ico">🎧</div>
+          <h3 th:text="#{service.LOCATION_EQUIPEMENT}">Location Équipement</h3>
+          <p th:text="#{service.LOCATION_EQUIPEMENT.desc}">Cabines, casques, micros.</p>
+          <div class="service-price" th:text="#{service.LOCATION_EQUIPEMENT.price}">Sur devis</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ DOCUMENTS ══════════════════════════════════════════════ -->
+<section class="docs-section">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-12 col-lg-5">
+        <div class="section-tag">📂 Documents acceptés</div>
+        <h2 class="section-title">Tous vos<br><em style="font-style:normal;color:var(--gd)">documents officiels</em></h2>
+        <p class="section-subtitle mb-4" th:text="#{home.docs.subtitle}">
+          Actes d'état civil, diplômes, contrats, visas — nous traduisons tous vos documents officiels avec la certification requise par les ambassades et administrations.
+        </p>
+        <a th:href="@{/devis}" class="btn-hero-primary" style="font-size:.9rem; padding:.7rem 1.5rem;">
+          🚀 <span th:text="#{home.hero.cta}">Demander un devis gratuit</span>
         </a>
       </div>
+      <div class="col-12 col-lg-7">
+        <div class="row g-2">
+          <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">🎓</div><div><div class="doc-chip-name">Diplômes</div><div class="doc-chip-sub">Licence · Master · Doctorat</div></div></div></div>
+          <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">📊</div><div><div class="doc-chip-name">Relevés de notes</div><div class="doc-chip-sub">Toutes filières</div></div></div></div>
+          <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">📋</div><div><div class="doc-chip-name">Acte de naissance</div><div class="doc-chip-sub">Campus France · Visa</div></div></div></div>
+          <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">⚖️</div><div><div class="doc-chip-name">Casier judiciaire</div><div class="doc-chip-sub">Visa · Autorisation</div></div></div></div>
+          <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">🏦</div><div><div class="doc-chip-name">Attestation bancaire</div><div class="doc-chip-sub">Justificatif ressources</div></div></div></div>
+          <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">🛂</div><div><div class="doc-chip-name">Passeport · Visa</div><div class="doc-chip-sub">Pages biographiques</div></div></div></div>
+          <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">🏥</div><div><div class="doc-chip-name">Certificat médical</div><div class="doc-chip-sub">Aptitude · Vaccination</div></div></div></div>
+          <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">📝</div><div><div class="doc-chip-name">Contrats · CV</div><div class="doc-chip-sub">Lettre de motivation</div></div></div></div>
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- ══ POURQUOI NOUS ══════════════════════════════════════════ -->
+<section class="why-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag">💎 <span th:text="#{home.why.title}">Pourquoi nous choisir</span></div>
+      <h2 class="section-title">Votre dossier refusé<br>faute d'une traduction ?<br><em style="font-style:normal;color:var(--gd)">Fini.</em></h2>
+    </div>
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="why-card">
+          <div class="why-ico">✅</div>
+          <div><h4 th:text="#{home.why.certified}">Certifiés officiels</h4><p>Reconnus par toutes les ambassades et administrations togolaises.</p></div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="why-card">
+          <div class="why-ico">⚡</div>
+          <div><h4 th:text="#{home.why.fast}">Délais rapides</h4><p>Devis en 30 minutes. Livraison express 24h disponible sur demande.</p></div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="why-card">
+          <div class="why-ico">🌍</div>
+          <div><h4 th:text="#{home.why.languages}">15+ langues</h4><p>Français, anglais, allemand, espagnol, arabe, éwé, mina et plus encore.</p></div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="why-card">
+          <div class="why-ico">🔒</div>
+          <div><h4 th:text="#{home.why.secure}">100% confidentiel</h4><p>Vos documents sont traités avec la plus stricte confidentialité.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA BAND ════════════════════════════════════════════════ -->
+<section class="cta-band">
+  <div class="container">
+    <h2>Prêt à commencer ?<br>Obtenez votre devis en <em style="font-style:normal;color:#7bde6e">30 minutes.</em></h2>
+    <p>Sans engagement · Gratuit · Réponse garantie par un expert certifié</p>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <a th:href="@{/devis}" class="btn-hero-primary">
+        🚀 <span th:text="#{home.hero.cta}">Demander un devis gratuit</span>
+      </a>
+      <a href="https://wa.me/228XXXXXXXX" class="btn-hero-wa" target="_blank" rel="noopener noreferrer">
+        💬 Contacter sur WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Script compteurs animés -->
+<script>
+document.querySelectorAll('.stat-number[data-count]').forEach(function(el) {
+  var target = parseInt(el.dataset.count);
+  var suffix = el.dataset.count > 10 ? '+' : '';
+  var start = 0;
+  var step = Math.ceil(target / 60);
+  var timer = setInterval(function() {
+    start = Math.min(start + step, target);
+    el.textContent = start + suffix;
+    if (start >= target) clearInterval(timer);
+  }, 25);
+});
+</script>
 
 </body>
 </html>
