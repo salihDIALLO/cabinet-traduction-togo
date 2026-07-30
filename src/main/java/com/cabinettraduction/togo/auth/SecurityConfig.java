@@ -49,24 +49,31 @@ public class SecurityConfig {
 			.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			// ── Règles d'autorisation ──
 			.authorizeHttpRequests(auth -> auth
-				// Endpoints publics
+				// ── Pages publiques du site ──
+				.requestMatchers(HttpMethod.GET, "/", "/devis", "/devis/**").permitAll()
+				// ── API publique ──
 				.requestMatchers("/api/auth/login").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/devis").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/services").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/paiement/webhook").permitAll()
-				// Actuator — à restreindre en production
-				.requestMatchers("/actuator/**").permitAll()
-				// Ressources statiques + Thymeleaf
-				.requestMatchers("/", "/resources/**", "/webjars/**",
-						"/owners/**", "/vets/**", "/pets/**")
-				.permitAll()
-				// Back-office : utilisateurs → ADMIN uniquement
+				// ── Ressources statiques (CSS, JS, images, webjars) ──
+				.requestMatchers(
+						"/resources/**", "/static/**", "/css/**", "/js/**",
+						"/images/**", "/webjars/**", "/favicon.ico").permitAll()
+				// ── Actuator health (supervision) ──
+				.requestMatchers("/actuator/health", "/actuator/info").permitAll()
+				// ── Pages héritées petclinic (à supprimer plus tard) ──
+				.requestMatchers("/owners/**", "/vets/**", "/pets/**", "/oups").permitAll()
+				// ── Back-office : utilisateurs → ADMIN uniquement ──
 				.requestMatchers("/admin/utilisateurs/**").hasRole("ADMIN")
-				// Back-office : devis → ADMIN ou EDITEUR
+				// ── Back-office : devis → ADMIN ou EDITEUR ──
 				.requestMatchers("/admin/devis/**").hasAnyRole("ADMIN", "EDITEUR")
-				// Tout le reste sous /admin/** → authentifié
+				// ── Tout le reste sous /admin/** → authentifié ──
 				.requestMatchers("/admin/**").authenticated()
-				// Autres endpoints REST → authentifié
-				.anyRequest().authenticated())
+				// ── API protégée (paiement init, etc.) ──
+				.requestMatchers("/api/paiement/init").authenticated()
+				// ── Tout le reste est public (site vitrine) ──
+				.anyRequest().permitAll())
 			// ── Filtre JWT ──
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

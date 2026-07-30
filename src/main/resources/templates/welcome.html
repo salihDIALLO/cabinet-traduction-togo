@@ -21,9 +21,9 @@
               <span class="fa fa-file-text me-2"></span>
               <span th:text="#{home.hero.cta}">Demander un devis gratuit</span>
             </a>
-            <a th:href="@{/devis(lang=${#locale.language})}"
+            <a th:href="'https://wa.me/228XXXXXXXX?text=' + #{home.hero.cta.whatsapp}"
                class="btn btn-outline-light btn-lg"
-               th:href="'https://wa.me/228XXXXXXXX?text=' + #{home.hero.cta.whatsapp}">
+               target="_blank" rel="noopener noreferrer">
               <span class="fa fa-whatsapp me-2"></span>
               <span th:text="#{home.hero.cta.whatsapp}">WhatsApp</span>
             </a>
