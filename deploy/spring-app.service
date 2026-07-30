@@ -1,0 +1,44 @@
+[Unit]
+Description=Cabinet de Traduction Togo — Spring Boot Application
+Documentation=https://github.com/salihDIALLO/cabinet-traduction-togo
+After=network.target mysql.service
+Requires=mysql.service
+
+[Service]
+# Utilisateur dédié sans droits root
+User=cabinet
+Group=cabinet
+
+# Répertoire de travail
+WorkingDirectory=/opt/cabinet-traduction
+
+# Fichier contenant toutes les variables d'environnement sensibles
+# À créer sur le serveur : /opt/cabinet-traduction/.env
+# Ne JAMAIS committer ce fichier
+EnvironmentFile=/opt/cabinet-traduction/.env
+
+# Commande de démarrage
+ExecStart=/usr/bin/java \
+  -Xms256m \
+  -Xmx512m \
+  -XX:+UseG1GC \
+  -Dspring.profiles.active=prod \
+  -jar /opt/cabinet-traduction/app.jar
+
+# Politique de redémarrage automatique
+Restart=on-failure
+RestartSec=10s
+StartLimitIntervalSec=60s
+StartLimitBurst=3
+
+# Logs vers journald (accessible via : journalctl -u spring-app -f)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cabinet-traduction
+
+# Sécurité système
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

@@ -90,7 +90,39 @@ class DevisControllerTest {
 			.andExpect(jsonPath("$.erreur").value(containsString("taille maximale")));
 	}
 
-	// ── Cas 3 : Extension interdite (.exe) → 400 ─────────────────────────────
+	// ── Cas 4 : Champs obligatoires manquants → 400 ─────────────────────────
+
+	@Test
+	void creerDevis_champManquant_retourne400() throws Exception {
+		// email absent
+		mockMvc.perform(multipart("/api/devis")
+				.param("nom", "Kofi Agbeko")
+				// email manquant intentionnellement
+				.param("telephone", "+22890123456")
+				.param("typeClient", "PARTICULIER")
+				.param("serviceId", "1")
+				.param("langueSource", "fr")
+				.param("langueCible", "en"))
+			.andExpect(status().isBadRequest());
+	}
+
+	// ── Cas 5 : Plus de 5 fichiers → 400 ─────────────────────────────────────
+
+	@Test
+	void creerDevis_tropDeFichiers_retourne400() throws Exception {
+		when(devisService.creerDemande(any(), anyList())).thenReturn(1);
+
+		MockMultipartFile f = new MockMultipartFile(
+				"fichiers", "doc.pdf", "application/pdf", "data".getBytes());
+
+		mockMvc.perform(multipart("/api/devis")
+				.file(f).file(f).file(f).file(f).file(f).file(f) // 6 fichiers
+				.param("nom", "Test").param("email", "t@t.com")
+				.param("telephone", "+228").param("typeClient", "PARTICULIER")
+				.param("serviceId", "1").param("langueSource", "fr").param("langueCible", "en"))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.erreur").value(containsString("5")));
+	}
 
 	@Test
 	void creerDevis_extensionInterdite_retourne400() throws Exception {
