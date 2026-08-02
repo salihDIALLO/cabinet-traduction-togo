@@ -31,7 +31,6 @@ import com.cabinettraduction.togo.devis.FileValidationService;
 import com.cabinettraduction.togo.devis.StatutDemande;
 import com.cabinettraduction.togo.paiement.PaiementRepository;
 import com.cabinettraduction.togo.paiement.StatutPaiement;
-
 /**
  * Gestion de l'upload des documents traduits par l'équipe admin/éditeur.
  *
@@ -68,6 +67,8 @@ public class DocumentTraduitController {
 
 	private final UtilisateurRepository utilisateurRepository;
 
+	private final TelechargementService telechargementService;
+
 	@Value("${app.base-url:http://localhost:8080}")
 	private String baseUrl;
 
@@ -77,7 +78,8 @@ public class DocumentTraduitController {
 			S3StorageService s3StorageService,
 			FileValidationService fileValidationService,
 			EmailService emailService,
-			UtilisateurRepository utilisateurRepository) {
+			UtilisateurRepository utilisateurRepository,
+			TelechargementService telechargementService) {
 		this.demandeDevisRepository = demandeDevisRepository;
 		this.documentTraduitRepository = documentTraduitRepository;
 		this.paiementRepository = paiementRepository;
@@ -85,6 +87,7 @@ public class DocumentTraduitController {
 		this.fileValidationService = fileValidationService;
 		this.emailService = emailService;
 		this.utilisateurRepository = utilisateurRepository;
+		this.telechargementService = telechargementService;
 	}
 
 	// ─── POST /admin/devis/{id}/document-traduit ──────────────────────────────
@@ -150,8 +153,9 @@ public class DocumentTraduitController {
 		demande.setStatut(StatutDemande.LIVREE);
 		demandeDevisRepository.save(demande);
 
-		// 8. Email au client — lien vers la page téléchargement (pas le fichier direct)
-		String lien = baseUrl + "/client/demandes/" + id + "/telechargement";
+		// 8. Générer le token client et construire le lien avec le token
+		String tokenValeur = telechargementService.creerToken(doc);
+		String lien = baseUrl + "/devis/" + id + "/telecharger?token=" + tokenValeur;
 		try {
 			emailService.envoyerTraductionPrete(
 					demande.getClient().getEmail(),

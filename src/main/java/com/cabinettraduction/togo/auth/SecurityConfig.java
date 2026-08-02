@@ -56,6 +56,9 @@ public class SecurityConfig {
 				// ── Page paiement publique ──
 				.requestMatchers("/paiement/**")
 				.permitAll()
+				// ── Téléchargement sécurisé client (token valide l'accès, pas JWT) ──
+				.requestMatchers(HttpMethod.GET, "/client/demandes/*/telechargement")
+				.permitAll()
 				// ── API publique ──
 				.requestMatchers("/api/auth/login")
 				.permitAll()
