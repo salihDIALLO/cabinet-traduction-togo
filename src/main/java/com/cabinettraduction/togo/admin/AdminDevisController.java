@@ -26,8 +26,8 @@ import com.cabinettraduction.togo.devis.StatutDemande;
 import lombok.Data;
 
 /**
- * Back-office : gestion des demandes de devis.
- * Accessible aux rôles ADMIN et EDITEUR (configuré dans SecurityConfig).
+ * Back-office : gestion des demandes de devis. Accessible aux rôles ADMIN et EDITEUR
+ * (configuré dans SecurityConfig).
  */
 @RestController
 @RequestMapping("/admin/devis")
@@ -40,15 +40,13 @@ public class AdminDevisController {
 	}
 
 	/**
-	 * GET /admin/devis?statut=NOUVEAU&page=0&size=20
-	 * Liste paginée des demandes, filtrable par statut.
+	 * GET /admin/devis?statut=NOUVEAU&page=0&size=20 Liste paginée des demandes,
+	 * filtrable par statut.
 	 */
 	@GetMapping
 	@PreAuthorize("hasAnyRole('ADMIN','EDITEUR')")
-	public Page<DemandeDevis> lister(
-			@RequestParam(required = false) StatutDemande statut,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size) {
+	public Page<DemandeDevis> lister(@RequestParam(required = false) StatutDemande statut,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by("dateCreation").descending());
 
@@ -59,13 +57,11 @@ public class AdminDevisController {
 	}
 
 	/**
-	 * PUT /admin/devis/{id}/statut
-	 * Change le statut d'une demande (réservé à ADMIN).
+	 * PUT /admin/devis/{id}/statut Change le statut d'une demande (réservé à ADMIN).
 	 */
 	@PutMapping("/{id}/statut")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> changerStatut(@PathVariable Integer id,
-			@Valid @RequestBody ChangerStatutRequest request) {
+	public ResponseEntity<?> changerStatut(@PathVariable Integer id, @Valid @RequestBody ChangerStatutRequest request) {
 
 		DemandeDevis demande = demandeDevisRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Demande introuvable : " + id));

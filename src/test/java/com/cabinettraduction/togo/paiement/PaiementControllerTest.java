@@ -56,8 +56,7 @@ class PaiementControllerTest {
 	@BeforeEach
 	void setup() {
 		mockMvc = MockMvcBuilders.standaloneSetup(paiementController).build();
-		ReflectionTestUtils.setField(paiementController, "callbackUrl",
-				"https://votre-site.tg/paiement/retour");
+		ReflectionTestUtils.setField(paiementController, "callbackUrl", "https://votre-site.tg/paiement/retour");
 
 		Client client = new Client();
 		client.setEmail("kofi@example.com");
@@ -80,25 +79,21 @@ class PaiementControllerTest {
 		when(paiementService.creerPaiementInitie(any(), any(), any())).thenReturn(paiementInitie);
 
 		FedaPayService.FedaPayTransactionResult result = new FedaPayService.FedaPayTransactionResult();
-		FedaPayService.FedaPayTransactionResult.Transaction tx =
-				new FedaPayService.FedaPayTransactionResult.Transaction();
+		FedaPayService.FedaPayTransactionResult.Transaction tx = new FedaPayService.FedaPayTransactionResult.Transaction();
 		tx.setReference("TRX-001");
 		tx.setApproval_url("https://sandbox.fedapay.com/pay/TRX-001");
 		result.setTransaction(tx);
 
-		when(fedaPayService.creerTransaction(any(), anyString(), anyString(), anyString()))
-			.thenReturn(result);
+		when(fedaPayService.creerTransaction(any(), anyString(), anyString(), anyString())).thenReturn(result);
 		when(paiementRepository.save(any())).thenReturn(paiementInitie);
 
-		mockMvc
-			.perform(post("/api/paiement/init").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-						  "demandeDevisId": 10,
-						  "montant": 15000,
-						  "moyenPaiement": "CARTE"
-						}
-						"""))
+		mockMvc.perform(post("/api/paiement/init").contentType(MediaType.APPLICATION_JSON).content("""
+				{
+				  "demandeDevisId": 10,
+				  "montant": 15000,
+				  "moyenPaiement": "CARTE"
+				}
+				"""))
 			.andExpect(status().isCreated())
 			.andExpect(jsonPath("$.paiementId").value(99))
 			.andExpect(jsonPath("$.urlPaiement").exists())
@@ -118,17 +113,13 @@ class PaiementControllerTest {
 
 		when(demandeDevisRepository.findById(20)).thenReturn(Optional.of(demandeNouvelle));
 
-		mockMvc
-			.perform(post("/api/paiement/init").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-						  "demandeDevisId": 20,
-						  "montant": 5000,
-						  "moyenPaiement": "FLOOZ"
-						}
-						"""))
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erreur").exists());
+		mockMvc.perform(post("/api/paiement/init").contentType(MediaType.APPLICATION_JSON).content("""
+				{
+				  "demandeDevisId": 20,
+				  "montant": 5000,
+				  "moyenPaiement": "FLOOZ"
+				}
+				""")).andExpect(status().isBadRequest()).andExpect(jsonPath("$.erreur").exists());
 	}
 
 	// ── Cas 3 : Demande introuvable → 400 ────────────────────────────────────
@@ -137,17 +128,13 @@ class PaiementControllerTest {
 	void initierPaiement_demandeIntrouvable_retourne400() throws Exception {
 		when(demandeDevisRepository.findById(999)).thenReturn(Optional.empty());
 
-		mockMvc
-			.perform(post("/api/paiement/init").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-						  "demandeDevisId": 999,
-						  "montant": 5000,
-						  "moyenPaiement": "TMONEY"
-						}
-						"""))
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erreur").exists());
+		mockMvc.perform(post("/api/paiement/init").contentType(MediaType.APPLICATION_JSON).content("""
+				{
+				  "demandeDevisId": 999,
+				  "montant": 5000,
+				  "moyenPaiement": "TMONEY"
+				}
+				""")).andExpect(status().isBadRequest()).andExpect(jsonPath("$.erreur").exists());
 	}
 
 	// ── Cas 4 : Webhook signature valide → 200 ───────────────────────────────
@@ -161,8 +148,7 @@ class PaiementControllerTest {
 		when(fedaPayService.verifierSignature(any(), anyString())).thenReturn(true);
 
 		mockMvc
-			.perform(post("/api/paiement/webhook")
-				.header("X-FedaPay-Signature", "valid-hmac-signature")
+			.perform(post("/api/paiement/webhook").header("X-FedaPay-Signature", "valid-hmac-signature")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(payload))
 			.andExpect(status().isOk());
@@ -175,8 +161,7 @@ class PaiementControllerTest {
 		when(fedaPayService.verifierSignature(any(), anyString())).thenReturn(false);
 
 		mockMvc
-			.perform(post("/api/paiement/webhook")
-				.header("X-FedaPay-Signature", "bad-signature")
+			.perform(post("/api/paiement/webhook").header("X-FedaPay-Signature", "bad-signature")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("""
 						{"name":"transaction.approved"}
@@ -188,12 +173,9 @@ class PaiementControllerTest {
 
 	@Test
 	void webhook_sansSignature_retourne401() throws Exception {
-		mockMvc
-			.perform(post("/api/paiement/webhook").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{"name":"transaction.approved"}
-						"""))
-			.andExpect(status().isUnauthorized());
+		mockMvc.perform(post("/api/paiement/webhook").contentType(MediaType.APPLICATION_JSON).content("""
+				{"name":"transaction.approved"}
+				""")).andExpect(status().isUnauthorized());
 	}
 
 }

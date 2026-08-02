@@ -11,8 +11,8 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 /**
- * Configuration de l'internationalisation (i18n). Permet de changer la langue via
- * le paramètre URL {@code ?lang=fr}.
+ * Configuration de l'internationalisation (i18n). Permet de changer la langue via le
+ * paramètre URL {@code ?lang=fr}.
  */
 @Configuration
 @SuppressWarnings("unused")

@@ -21,10 +21,10 @@ import java.util.List;
 /**
  * Configuration Spring Security stateless pour l'API REST.
  *
- * CORS : activé ici car le front-office et le back-office admin sont des
- * applications séparées (React, Vue, etc.) servis sur des origines différentes.
- * Si frontend et API sont servis depuis le même domaine (même port), CORS
- * n'est pas nécessaire et tu peux supprimer {@code .cors(…)} ci-dessous.
+ * CORS : activé ici car le front-office et le back-office admin sont des applications
+ * séparées (React, Vue, etc.) servis sur des origines différentes. Si frontend et API
+ * sont servis depuis le même domaine (même port), CORS n'est pas nécessaire et tu peux
+ * supprimer {@code .cors(…)} ci-dessous.
  */
 @Configuration
 @EnableMethodSecurity
@@ -40,8 +40,9 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			// ── CSRF désactivé : API REST stateless, pas de session ──
-			.csrf(csrf -> csrf
-				.ignoringRequestMatchers("/api/paiement/webhook") // webhook FedaPay signé
+			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/paiement/webhook") // webhook
+																				// FedaPay
+																				// signé
 				.disable())
 			// ── CORS ──
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -50,30 +51,51 @@ public class SecurityConfig {
 			// ── Règles d'autorisation ──
 			.authorizeHttpRequests(auth -> auth
 				// ── Pages publiques du site ──
-				.requestMatchers(HttpMethod.GET, "/", "/devis", "/devis/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/", "/devis", "/devis/**")
+				.permitAll()
+				// ── Page paiement publique ──
+				.requestMatchers("/paiement/**")
+				.permitAll()
 				// ── API publique ──
-				.requestMatchers("/api/auth/login").permitAll()
-				.requestMatchers(HttpMethod.POST, "/api/devis").permitAll()
-				.requestMatchers(HttpMethod.GET, "/api/services").permitAll()
-				.requestMatchers(HttpMethod.POST, "/api/paiement/webhook").permitAll()
+				.requestMatchers("/api/auth/login")
+				.permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/devis")
+				.permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/services")
+				.permitAll()
+				// Webhook et notification CinetPay (appels depuis CinetPay, pas de JWT)
+				.requestMatchers(HttpMethod.POST, "/api/paiement/webhook")
+				.permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/paiement/notify")
+				.permitAll()
+				// CinetPay endpoints dédiés
+				.requestMatchers(HttpMethod.POST, "/api/paiement/cinetpay/notify")
+				.permitAll()
 				// ── Ressources statiques (CSS, JS, images, webjars) ──
-				.requestMatchers(
-						"/resources/**", "/static/**", "/css/**", "/js/**",
-						"/images/**", "/webjars/**", "/favicon.ico").permitAll()
+				.requestMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**", "/webjars/**",
+						"/favicon.ico")
+				.permitAll()
 				// ── Actuator health (supervision) ──
-				.requestMatchers("/actuator/health", "/actuator/info").permitAll()
+				.requestMatchers("/actuator/health", "/actuator/info")
+				.permitAll()
 				// ── Pages héritées petclinic (à supprimer plus tard) ──
-				.requestMatchers("/owners/**", "/vets/**", "/pets/**", "/oups").permitAll()
+				.requestMatchers("/owners/**", "/vets/**", "/pets/**", "/oups")
+				.permitAll()
 				// ── Back-office : utilisateurs → ADMIN uniquement ──
-				.requestMatchers("/admin/utilisateurs/**").hasRole("ADMIN")
+				.requestMatchers("/admin/utilisateurs/**")
+				.hasRole("ADMIN")
 				// ── Back-office : devis → ADMIN ou EDITEUR ──
-				.requestMatchers("/admin/devis/**").hasAnyRole("ADMIN", "EDITEUR")
+				.requestMatchers("/admin/devis/**")
+				.hasAnyRole("ADMIN", "EDITEUR")
 				// ── Tout le reste sous /admin/** → authentifié ──
-				.requestMatchers("/admin/**").authenticated()
+				.requestMatchers("/admin/**")
+				.authenticated()
 				// ── API protégée (paiement init, etc.) ──
-				.requestMatchers("/api/paiement/init").authenticated()
+				.requestMatchers("/api/paiement/init")
+				.authenticated()
 				// ── Tout le reste est public (site vitrine) ──
-				.anyRequest().permitAll())
+				.anyRequest()
+				.permitAll())
 			// ── Filtre JWT ──
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -86,14 +108,13 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-			throws Exception {
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
 
 	/**
-	 * Configuration CORS — autorise les origines déclarées dans les variables d'env.
-	 * En production, remplace "*" par l'URL exacte de ton frontend admin.
+	 * Configuration CORS — autorise les origines déclarées dans les variables d'env. En
+	 * production, remplace "*" par l'URL exacte de ton frontend admin.
 	 */
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {

@@ -35,6 +35,9 @@
     <maven-checkstyle.version>3.6.0</maven-checkstyle.version>
     <nohttp-checkstyle.version>0.0.11</nohttp-checkstyle.version>
     <spring-format.version>0.0.47</spring-format.version>
+    <!-- Mettre a true en dev local pour ignorer la validation de format -->
+    <!-- En CI/CD laisser a false (valeur par defaut) -->
+    <spring-javaformat.skip>false</spring-javaformat.skip>
   </properties>
 
   <dependencies>
@@ -286,6 +289,10 @@
               <goal>validate</goal>
             </goals>
             <phase>validate</phase>
+            <configuration>
+              <!-- Passer -Dspring-javaformat.skip=true en dev pour ignorer -->
+              <skip>${spring-javaformat.skip}</skip>
+            </configuration>
           </execution>
         </executions>
       </plugin>

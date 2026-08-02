@@ -16,8 +16,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Filtre Spring Security qui lit le JWT depuis le header Authorization,
- * le valide et injecte l'authentification dans le SecurityContext.
+ * Filtre Spring Security qui lit le JWT depuis le header Authorization, le valide et
+ * injecte l'authentification dans le SecurityContext.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -29,8 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-			FilterChain chain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws ServletException, IOException {
 
 		String token = extraireToken(request);
 
@@ -38,8 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String email = tokenProvider.getEmail(token);
 			String role = tokenProvider.getRole(token);
 
-			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email,
-					null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email, null,
+					List.of(new SimpleGrantedAuthority("ROLE_" + role)));
 
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		}

@@ -8,19 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Valide les fichiers joints à une demande de devis.
- * Utilise Apache Tika pour détecter le type MIME réel par magic bytes
- * (résistant aux extensions renommées).
+ * Valide les fichiers joints à une demande de devis. Utilise Apache Tika pour détecter le
+ * type MIME réel par magic bytes (résistant aux extensions renommées).
  */
 @Service
 public class FileValidationService {
 
 	private static final long MAX_SIZE_BYTES = 10L * 1024 * 1024; // 10 Mo
 
-	private static final Set<String> MIME_AUTORISES = Set.of(
-			"application/pdf",
-			"image/jpeg",
-			"image/png",
+	private static final Set<String> MIME_AUTORISES = Set.of("application/pdf", "image/jpeg", "image/png",
 			"application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
 	private final Tika tika = new Tika();
@@ -31,9 +27,8 @@ public class FileValidationService {
 	 */
 	public void valider(MultipartFile file) {
 		if (file.getSize() > MAX_SIZE_BYTES) {
-			throw new FileValidationException(
-					"Le fichier '%s' dépasse la taille maximale autorisée (10 Mo).".formatted(
-							file.getOriginalFilename()));
+			throw new FileValidationException("Le fichier '%s' dépasse la taille maximale autorisée (10 Mo)."
+				.formatted(file.getOriginalFilename()));
 		}
 
 		String mimeDetecte;
@@ -47,9 +42,8 @@ public class FileValidationService {
 
 		if (!MIME_AUTORISES.contains(mimeDetecte)) {
 			throw new FileValidationException(
-					("Le type du fichier '%s' n'est pas autorisé (%s). "
-							+ "Formats acceptés : PDF, JPG, PNG, DOCX.").formatted(
-									file.getOriginalFilename(), mimeDetecte));
+					("Le type du fichier '%s' n'est pas autorisé (%s). " + "Formats acceptés : PDF, JPG, PNG, DOCX.")
+						.formatted(file.getOriginalFilename(), mimeDetecte));
 		}
 	}
 

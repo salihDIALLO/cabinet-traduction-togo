@@ -44,8 +44,7 @@ public class DevisController {
 
 	@PostMapping(consumes = "multipart/form-data")
 	public ResponseEntity<?> creerDevis(@Valid @ModelAttribute DevisRequest request,
-			@RequestPart(value = "fichiers", required = false) List<MultipartFile> fichiers)
-			throws IOException {
+			@RequestPart(value = "fichiers", required = false) List<MultipartFile> fichiers) throws IOException {
 
 		List<MultipartFile> docs = fichiers != null ? fichiers : Collections.emptyList();
 

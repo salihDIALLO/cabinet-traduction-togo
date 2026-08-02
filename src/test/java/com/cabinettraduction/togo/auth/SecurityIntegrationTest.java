@@ -20,18 +20,16 @@ import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Tests d'intégration Spring Security.
- * Vérifie les règles d'accès : JWT obligatoire, rôles ADMIN/EDITEUR.
+ * Tests d'intégration Spring Security. Vérifie les règles d'accès : JWT obligatoire,
+ * rôles ADMIN/EDITEUR.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK,
 		properties = { "spring.flyway.enabled=false", "spring.jpa.hibernate.ddl-auto=none",
 				"spring.sql.init.mode=never",
 				"app.jwt.secret=test-secret-key-for-unit-tests-minimum-64-bytes-long-padding-ok",
-				"cloud.aws.credentials.access-key=test",
-				"cloud.aws.credentials.secret-key=test",
-				"cloud.aws.s3.bucket=test", "cloud.aws.region.static=eu-west-3",
-				"spring.mail.host=localhost", "spring.mail.port=25",
-				"app.fedapay.api-key=test", "app.fedapay.webhook-secret=test" })
+				"cloud.aws.credentials.access-key=test", "cloud.aws.credentials.secret-key=test",
+				"cloud.aws.s3.bucket=test", "cloud.aws.region.static=eu-west-3", "spring.mail.host=localhost",
+				"spring.mail.port=25", "app.fedapay.api-key=test", "app.fedapay.webhook-secret=test" })
 @AutoConfigureMockMvc
 @DisabledInNativeImage
 @DisabledInAotMode
@@ -78,12 +76,9 @@ class SecurityIntegrationTest {
 	@Test
 	@WithMockUser(roles = "EDITEUR")
 	void adminDevisPutStatut_roleEditeur_retourne403() throws Exception {
-		mockMvc
-			.perform(put("/admin/devis/1/statut").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{"statut":"ACCEPTE"}
-						"""))
-			.andExpect(status().isForbidden());
+		mockMvc.perform(put("/admin/devis/1/statut").contentType(MediaType.APPLICATION_JSON).content("""
+				{"statut":"ACCEPTE"}
+				""")).andExpect(status().isForbidden());
 	}
 
 	// ── PUT statut avec rôle ADMIN → autorisé ────────────────────────────────
@@ -92,33 +87,25 @@ class SecurityIntegrationTest {
 	@WithMockUser(roles = "ADMIN")
 	void adminDevisPutStatut_roleAdmin_nonForbidden() throws Exception {
 		// 400 ou 500 (pas de BDD) mais pas 403
-		mockMvc
-			.perform(put("/admin/devis/999/statut").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{"statut":"ACCEPTE"}
-						"""))
-			.andExpect(result -> {
-				int s = result.getResponse().getStatus();
-				assert s != 403 : "ADMIN ne devrait pas avoir 403";
-			});
+		mockMvc.perform(put("/admin/devis/999/statut").contentType(MediaType.APPLICATION_JSON).content("""
+				{"statut":"ACCEPTE"}
+				""")).andExpect(result -> {
+			int s = result.getResponse().getStatus();
+			assert s != 403 : "ADMIN ne devrait pas avoir 403";
+		});
 	}
 
 	// ── Paiement init sans JWT → 403 ─────────────────────────────────────────
 
 	@Test
 	void paiementInit_sansJwt_retourne403() throws Exception {
-		mockMvc
-			.perform(put("/api/paiement/init").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{"demandeDevisId":1,"montant":5000}
-						"""))
-			.andExpect(status().isForbidden());
+		mockMvc.perform(put("/api/paiement/init").contentType(MediaType.APPLICATION_JSON).content("""
+				{"demandeDevisId":1,"montant":5000}
+				""")).andExpect(status().isForbidden());
 	}
 
-	@SpringBootApplication(
-			exclude = { DataSourceAutoConfiguration.class,
-					DataSourceTransactionManagerAutoConfiguration.class,
-					HibernateJpaAutoConfiguration.class },
+	@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class,
+			DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class },
 			scanBasePackages = "com.cabinettraduction.togo")
 	static class TestConfig {
 

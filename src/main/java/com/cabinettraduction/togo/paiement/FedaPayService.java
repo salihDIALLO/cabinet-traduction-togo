@@ -23,9 +23,9 @@ import lombok.Data;
  * Intégration FedaPay via WebClient (API REST officielle FedaPay v1).
  *
  * Documentation officielle :
- * <a href="https://docs.fedapay.com">https://docs.fedapay.com</a>
- * — Rubriques "Transactions" et "Webhooks" pour le format exact des payloads.
- * Sandbox : https://sandbox.fedapay.com — clé test disponible après inscription.
+ * <a href="https://docs.fedapay.com">https://docs.fedapay.com</a> — Rubriques
+ * "Transactions" et "Webhooks" pour le format exact des payloads. Sandbox :
+ * https://sandbox.fedapay.com — clé test disponible après inscription.
  */
 @Service
 public class FedaPayService {
@@ -41,8 +41,7 @@ public class FedaPayService {
 	@Value("${app.fedapay.webhook-secret}")
 	private String webhookSecret;
 
-	public FedaPayService(
-			@Value("${app.fedapay.api-key}") String apiKey,
+	public FedaPayService(@Value("${app.fedapay.api-key}") String apiKey,
 			@Value("${app.fedapay.sandbox:true}") boolean sandbox) {
 
 		String baseUrl = sandbox ? FEDAPAY_SANDBOX_URL : FEDAPAY_API_URL;
@@ -63,15 +62,11 @@ public class FedaPayService {
 	 * @param callbackUrl URL de retour après paiement (votre frontend)
 	 * @return résultat de la création de transaction
 	 */
-	public FedaPayTransactionResult creerTransaction(BigDecimal montant, String description,
-			String clientEmail, String callbackUrl) {
+	public FedaPayTransactionResult creerTransaction(BigDecimal montant, String description, String clientEmail,
+			String callbackUrl) {
 
-		Map<String, Object> body = Map.of(
-				"description", description,
-				"amount", montant.intValue(),
-				"currency", Map.of("iso", "XOF"),
-				"callback_url", callbackUrl,
-				"customer", Map.of("email", clientEmail));
+		Map<String, Object> body = Map.of("description", description, "amount", montant.intValue(), "currency",
+				Map.of("iso", "XOF"), "callback_url", callbackUrl, "customer", Map.of("email", clientEmail));
 
 		return webClient.post()
 			.uri("/transactions")
@@ -84,10 +79,9 @@ public class FedaPayService {
 	/**
 	 * Vérifie la signature HMAC-SHA256 du webhook FedaPay.
 	 *
-	 * FedaPay envoie la signature dans le header {@code X-FedaPay-Signature}.
-	 * Le secret se trouve dans ton tableau de bord FedaPay → Webhooks → Secret.
-	 * Stocker dans la variable d'environnement {@code FEDAPAY_WEBHOOK_SECRET}.
-	 *
+	 * FedaPay envoie la signature dans le header {@code X-FedaPay-Signature}. Le secret
+	 * se trouve dans ton tableau de bord FedaPay → Webhooks → Secret. Stocker dans la
+	 * variable d'environnement {@code FEDAPAY_WEBHOOK_SECRET}.
 	 * @param payload corps brut (raw bytes) du webhook
 	 * @param signatureRecue valeur du header X-FedaPay-Signature
 	 * @return true si la signature est valide
@@ -95,8 +89,7 @@ public class FedaPayService {
 	public boolean verifierSignature(byte[] payload, String signatureRecue) {
 		try {
 			Mac mac = Mac.getInstance("HmacSHA256");
-			SecretKeySpec keySpec = new SecretKeySpec(
-					webhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+			SecretKeySpec keySpec = new SecretKeySpec(webhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
 			mac.init(keySpec);
 			byte[] hash = mac.doFinal(payload);
 			// Convertir en hex

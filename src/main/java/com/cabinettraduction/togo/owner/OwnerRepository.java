@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Repository pour l'entité {@link Owner}. Toutes les méthodes suivent les conventions
- * de nommage Spring Data.
+ * Repository pour l'entité {@link Owner}. Toutes les méthodes suivent les conventions de
+ * nommage Spring Data.
  */
 public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 

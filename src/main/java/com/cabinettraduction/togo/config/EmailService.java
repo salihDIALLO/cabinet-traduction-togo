@@ -39,4 +39,34 @@ public class EmailService {
 		mailSender.send(msg);
 	}
 
+	/**
+	 * Notifie le client que sa traduction est prête à télécharger.
+	 * @param destinataire email du client
+	 * @param nomClient nom complet du client
+	 * @param demandeId référence de la demande
+	 * @param lienTelechargement URL vers la page de téléchargement (pas le fichier direct)
+	 */
+	public void envoyerTraductionPrete(String destinataire, String nomClient,
+			Integer demandeId, String lienTelechargement) {
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo(destinataire);
+		msg.setSubject("Votre traduction #" + demandeId + " est prête — Cabinet Traduction Togo");
+		msg.setText("""
+				Bonjour %s,
+
+				Votre document traduit (demande #%d) est disponible.
+				Cliquez sur le lien ci-dessous pour le télécharger :
+
+				%s
+
+				Ce lien est valable 24 heures. Passé ce délai, connectez-vous
+				à votre espace client pour en générer un nouveau.
+
+				En cas de problème, répondez à cet email ou contactez-nous via WhatsApp.
+
+				Cabinet de Traduction Certifiée et Interprétation — Lomé, Togo
+				""".formatted(nomClient, demandeId, lienTelechargement));
+		mailSender.send(msg);
+	}
+
 }

@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportRuntimeHints;
 
 /**
- * Cabinet de Traduction Certifiée et Interprétation - Togo
- * Application Spring Boot principale.
+ * Cabinet de Traduction Certifiée et Interprétation - Togo Application Spring Boot
+ * principale.
  */
 @SpringBootApplication
 @ImportRuntimeHints(CabinetTraductionRuntimeHints.class)

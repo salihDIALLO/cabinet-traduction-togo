@@ -57,21 +57,16 @@ class AuthControllerTest {
 
 	@Test
 	void login_credentialsValides_retourne200AvecToken() throws Exception {
-		when(utilisateurRepository.findByEmail("admin@cabinet.tg"))
-			.thenReturn(Optional.of(adminUser));
-		when(passwordEncoder.matches("monMotDePasse", adminUser.getMotDePasseHash()))
-			.thenReturn(true);
-		when(tokenProvider.creerToken("admin@cabinet.tg", "ADMIN"))
-			.thenReturn("eyJhbGciOiJIUzI1NiJ9.fake.token");
+		when(utilisateurRepository.findByEmail("admin@cabinet.tg")).thenReturn(Optional.of(adminUser));
+		when(passwordEncoder.matches("monMotDePasse", adminUser.getMotDePasseHash())).thenReturn(true);
+		when(tokenProvider.creerToken("admin@cabinet.tg", "ADMIN")).thenReturn("eyJhbGciOiJIUzI1NiJ9.fake.token");
 
-		mockMvc
-			.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-						  "email": "admin@cabinet.tg",
-						  "motDePasse": "monMotDePasse"
-						}
-						"""))
+		mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("""
+				{
+				  "email": "admin@cabinet.tg",
+				  "motDePasse": "monMotDePasse"
+				}
+				"""))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.token").value("eyJhbGciOiJIUzI1NiJ9.fake.token"))
 			.andExpect(jsonPath("$.role").value("ADMIN"))
@@ -82,19 +77,15 @@ class AuthControllerTest {
 
 	@Test
 	void login_mauvaisMotDePasse_retourne401() throws Exception {
-		when(utilisateurRepository.findByEmail("admin@cabinet.tg"))
-			.thenReturn(Optional.of(adminUser));
-		when(passwordEncoder.matches("mauvaisMotDePasse", adminUser.getMotDePasseHash()))
-			.thenReturn(false);
+		when(utilisateurRepository.findByEmail("admin@cabinet.tg")).thenReturn(Optional.of(adminUser));
+		when(passwordEncoder.matches("mauvaisMotDePasse", adminUser.getMotDePasseHash())).thenReturn(false);
 
-		mockMvc
-			.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-						  "email": "admin@cabinet.tg",
-						  "motDePasse": "mauvaisMotDePasse"
-						}
-						"""))
+		mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("""
+				{
+				  "email": "admin@cabinet.tg",
+				  "motDePasse": "mauvaisMotDePasse"
+				}
+				"""))
 			.andExpect(status().isUnauthorized())
 			.andExpect(jsonPath("$.erreur").value("Email ou mot de passe incorrect."));
 	}
@@ -105,46 +96,36 @@ class AuthControllerTest {
 	void login_utilisateurInconnu_retourne401() throws Exception {
 		when(utilisateurRepository.findByEmail("inconnu@test.com")).thenReturn(Optional.empty());
 
-		mockMvc
-			.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-						  "email": "inconnu@test.com",
-						  "motDePasse": "n'importe"
-						}
-						"""))
-			.andExpect(status().isUnauthorized())
-			.andExpect(jsonPath("$.erreur").exists());
+		mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("""
+				{
+				  "email": "inconnu@test.com",
+				  "motDePasse": "n'importe"
+				}
+				""")).andExpect(status().isUnauthorized()).andExpect(jsonPath("$.erreur").exists());
 	}
 
 	// ── Cas 4 : Email invalide (pas un email) → 400 ───────────────────────────
 
 	@Test
 	void login_emailInvalide_retourne400() throws Exception {
-		mockMvc
-			.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-						  "email": "pas-un-email",
-						  "motDePasse": "secret"
-						}
-						"""))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("""
+				{
+				  "email": "pas-un-email",
+				  "motDePasse": "secret"
+				}
+				""")).andExpect(status().isBadRequest());
 	}
 
 	// ── Cas 5 : Corps vide → 400 ──────────────────────────────────────────────
 
 	@Test
 	void login_corpsVide_retourne400() throws Exception {
-		mockMvc
-			.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{
-						  "email": "",
-						  "motDePasse": ""
-						}
-						"""))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("""
+				{
+				  "email": "",
+				  "motDePasse": ""
+				}
+				""")).andExpect(status().isBadRequest());
 	}
 
 }

@@ -30,11 +30,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 /**
  * Tests unitaires pour {@link AdminDevisController}.
  *
- * Note sur l'accès non autorisé :
- * Les tests d'accès JWT (403 sans token, 403 EDITEUR sur PUT) sont vérifiés
- * au niveau de la configuration Spring Security dans SecurityConfig.
- * Ici on teste la logique métier du contrôleur en isolation.
- * Les tests d'intégration sécurité sont dans SecurityIntegrationTest.
+ * Note sur l'accès non autorisé : Les tests d'accès JWT (403 sans token, 403 EDITEUR sur
+ * PUT) sont vérifiés au niveau de la configuration Spring Security dans SecurityConfig.
+ * Ici on teste la logique métier du contrôleur en isolation. Les tests d'intégration
+ * sécurité sont dans SecurityIntegrationTest.
  */
 @ExtendWith(MockitoExtension.class)
 class AdminDevisControllerTest {
@@ -62,8 +61,7 @@ class AdminDevisControllerTest {
 
 	@Test
 	void lister_sansFiltre_retourne200AvecPage() throws Exception {
-		when(demandeDevisRepository.findAll(any(Pageable.class)))
-			.thenReturn(new PageImpl<>(List.of(demandeTest)));
+		when(demandeDevisRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(demandeTest)));
 
 		mockMvc.perform(get("/admin/devis?page=0&size=10"))
 			.andExpect(status().isOk())
@@ -90,11 +88,9 @@ class AdminDevisControllerTest {
 		when(demandeDevisRepository.findById(1)).thenReturn(Optional.of(demandeTest));
 		when(demandeDevisRepository.save(any())).thenReturn(demandeTest);
 
-		mockMvc
-			.perform(put("/admin/devis/1/statut").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{"statut": "ACCEPTE"}
-						"""))
+		mockMvc.perform(put("/admin/devis/1/statut").contentType(MediaType.APPLICATION_JSON).content("""
+				{"statut": "ACCEPTE"}
+				"""))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.id").value(1))
 			.andExpect(jsonPath("$.statut").value("ACCEPTE"));
@@ -106,25 +102,18 @@ class AdminDevisControllerTest {
 	void changerStatut_demandeIntrouvable_retourne400() throws Exception {
 		when(demandeDevisRepository.findById(999)).thenReturn(Optional.empty());
 
-		mockMvc
-			.perform(put("/admin/devis/999/statut").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{"statut": "ACCEPTE"}
-						"""))
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erreur").exists());
+		mockMvc.perform(put("/admin/devis/999/statut").contentType(MediaType.APPLICATION_JSON).content("""
+				{"statut": "ACCEPTE"}
+				""")).andExpect(status().isBadRequest()).andExpect(jsonPath("$.erreur").exists());
 	}
 
 	// ── Cas 5 : Statut null → 400 ────────────────────────────────────────────
 
 	@Test
 	void changerStatut_statutNull_retourne400() throws Exception {
-		mockMvc
-			.perform(put("/admin/devis/1/statut").contentType(MediaType.APPLICATION_JSON)
-				.content("""
-						{"statut": null}
-						"""))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(put("/admin/devis/1/statut").contentType(MediaType.APPLICATION_JSON).content("""
+				{"statut": null}
+				""")).andExpect(status().isBadRequest());
 	}
 
 }

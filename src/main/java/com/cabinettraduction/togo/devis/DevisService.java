@@ -38,9 +38,8 @@ public class DevisService {
 	private final FileValidationService fileValidationService;
 
 	public DevisService(ClientRepository clientRepository, ServiceRepository serviceRepository,
-			DemandeDevisRepository demandeDevisRepository,
-			DocumentJointRepository documentJointRepository, S3StorageService s3,
-			EmailService emailService, FileValidationService fileValidationService) {
+			DemandeDevisRepository demandeDevisRepository, DocumentJointRepository documentJointRepository,
+			S3StorageService s3, EmailService emailService, FileValidationService fileValidationService) {
 		this.clientRepository = clientRepository;
 		this.serviceRepository = serviceRepository;
 		this.demandeDevisRepository = demandeDevisRepository;
@@ -82,8 +81,7 @@ public class DevisService {
 
 		// 3. Charger le service demandé
 		Service service = serviceRepository.findById(req.getServiceId())
-			.orElseThrow(() -> new IllegalArgumentException(
-					"Service introuvable avec l'id : " + req.getServiceId()));
+			.orElseThrow(() -> new IllegalArgumentException("Service introuvable avec l'id : " + req.getServiceId()));
 
 		// 4. Créer la demande de devis
 		DemandeDevis demande = new DemandeDevis();
@@ -109,12 +107,11 @@ public class DevisService {
 
 		// 6. Email de confirmation — non bloquant sur erreur SMTP
 		try {
-			emailService.envoyerConfirmationDevis(client.getEmail(), client.getNom(),
-					sauvegardee.getId());
+			emailService.envoyerConfirmationDevis(client.getEmail(), client.getNom(), sauvegardee.getId());
 		}
 		catch (Exception e) {
-			log.warn("Échec de l'envoi de l'email de confirmation pour la demande #{} : {}",
-					sauvegardee.getId(), e.getMessage());
+			log.warn("Échec de l'envoi de l'email de confirmation pour la demande #{} : {}", sauvegardee.getId(),
+					e.getMessage());
 		}
 
 		return sauvegardee.getId();

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'paiement')}">
+<body>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+
+      <!-- En-tête -->
+      <div class="text-center mb-4">
+        <div class="section-tag">💳 Paiement sécurisé</div>
+        <h2 class="section-title">Finaliser votre paiement</h2>
+        <p class="section-subtitle">
+          Paiement sécurisé via <strong>CinetPay</strong> —
+          Flooz, Yass, Moov Money, Carte bancaire
+        </p>
+      </div>
+
+      <!-- Récapitulatif commande -->
+      <div class="card border-0 shadow-sm mb-4" style="border-radius:14px; overflow:hidden;">
+        <div style="background:var(--gk); color:#fff; padding:1rem 1.25rem;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span style="font-size:.85rem; opacity:.8;">Demande #<span th:text="${demandeId}">—</span></span>
+            <span style="font-weight:800; font-size:1.2rem;"
+                  th:text="${#numbers.formatDecimal(montant, 0, 'COMMA', 0, 'POINT')} + ' XOF'">0 XOF</span>
+          </div>
+          <div style="font-size:.82rem; margin-top:.25rem; opacity:.7;"
+               th:text="${service}">Service de traduction</div>
+        </div>
+        <div style="padding:1rem 1.25rem; background:#fff;">
+          <div class="row g-2">
+            <div class="col-12" style="font-size:.82rem; color:var(--tm);">
+              <span style="font-weight:700;">Client :</span>
+              <span th:text="${nomClient}">—</span>
+            </div>
+            <div class="col-12" style="font-size:.82rem; color:var(--tm);">
+              <span style="font-weight:700;">Langues :</span>
+              <span th:text="${langueSource + ' → ' + langueCible}">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Choix du moyen de paiement -->
+      <div class="card border-0 shadow-sm mb-4" style="border-radius:14px;">
+        <div style="padding:1.25rem;">
+          <h5 style="font-weight:800; margin-bottom:1rem;">Choisir votre moyen de paiement</h5>
+
+          <div class="row g-2 mb-3">
+            <!-- Flooz -->
+            <div class="col-6">
+              <label class="payment-option" id="opt-flooz" onclick="selectPayment('FLOOZ',this)">
+                <input type="radio" name="moyenPaiement" value="FLOOZ" style="display:none;">
+                <div class="d-flex align-items-center gap-2 p-3"
+                     style="border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;">
+                  <span style="font-size:1.5rem;">📱</span>
+                  <div>
+                    <div style="font-weight:800;font-size:.88rem;">Flooz</div>
+                    <div style="font-size:.72rem;color:var(--tm);">Togocel</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <!-- Yass -->
+            <div class="col-6">
+              <label class="payment-option" id="opt-yass" onclick="selectPayment('YASS',this)">
+                <input type="radio" name="moyenPaiement" value="YASS" style="display:none;">
+                <div class="d-flex align-items-center gap-2 p-3"
+                     style="border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;">
+                  <span style="font-size:1.5rem;">📲</span>
+                  <div>
+                    <div style="font-weight:800;font-size:.88rem;">Yass</div>
+                    <div style="font-size:.72rem;color:var(--tm);">Moov Togo</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <!-- Moov Money -->
+            <div class="col-6">
+              <label class="payment-option" id="opt-moov" onclick="selectPayment('MOOV_MONEY',this)">
+                <input type="radio" name="moyenPaiement" value="MOOV_MONEY" style="display:none;">
+                <div class="d-flex align-items-center gap-2 p-3"
+                     style="border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;">
+                  <span style="font-size:1.5rem;">💸</span>
+                  <div>
+                    <div style="font-weight:800;font-size:.88rem;">Moov Money</div>
+                    <div style="font-size:.72rem;color:var(--tm);">Mobile Money</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <!-- Carte -->
+            <div class="col-6">
+              <label class="payment-option" id="opt-carte" onclick="selectPayment('CARTE',this)">
+                <input type="radio" name="moyenPaiement" value="CARTE" style="display:none;">
+                <div class="d-flex align-items-center gap-2 p-3"
+                     style="border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;">
+                  <span style="font-size:1.5rem;">💳</span>
+                  <div>
+                    <div style="font-weight:800;font-size:.88rem;">Carte</div>
+                    <div style="font-size:.72rem;color:var(--tm);">Visa / Mastercard</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Erreur -->
+          <div id="pay-error" class="alert-err" style="display:none;padding:.7rem;border-radius:8px;font-size:.85rem;"></div>
+
+          <!-- Bouton payer -->
+          <button id="btn-payer" onclick="initierPaiement()" class="btn-submit-ct" style="width:100%;">
+            <span id="btn-payer-txt">🔒 Payer maintenant</span>
+            <span id="btn-payer-loading" style="display:none;">
+              <span style="border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;width:16px;height:16px;display:inline-block;animation:spin .6s linear infinite;margin-right:.4rem;"></span>
+              Connexion à CinetPay...
+            </span>
+          </button>
+
+          <div style="text-align:center;margin-top:.75rem;font-size:.72rem;color:var(--tl);">
+            🔒 Paiement sécurisé · Powered by CinetPay
+          </div>
+        </div>
+      </div>
+
+      <!-- Succès -->
+      <div id="success-panel" style="display:none;"
+           class="card border-0 shadow-sm text-center p-4" style="border-radius:14px;">
+        <span style="font-size:3rem;">✅</span>
+        <h4 style="font-weight:800;margin-top:.75rem;">Paiement réussi !</h4>
+        <p style="color:var(--tm);font-size:.9rem;" id="success-msg">
+          Votre traduction sera livrée sous 24–48h ouvrées.
+        </p>
+        <a th:href="@{/}" class="btn-hero-primary" style="margin-top:1rem;display:inline-flex;">
+          Retour à l'accueil
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CinetPay Seamless via CDN -->
+<script src="https://unpkg.com/cinetpay-seamless@0.1.5/dist/cinetpay-seamless.umd.cjs"></script>
+
+<script th:inline="javascript">
+  const DEMANDE_ID = [[${demandeId}]];
+  const MONTANT    = [[${montant}]];
+  let   moyenSelectionne = null;
+
+  function selectPayment(moyen, el) {
+    moyenSelectionne = moyen;
+    // Reset tous
+    document.querySelectorAll('.payment-option > div').forEach(function(d) {
+      d.style.borderColor = 'var(--border)';
+      d.style.background  = '#fff';
+    });
+    // Activer celui cliqué
+    const inner = el.querySelector('div');
+    inner.style.borderColor = 'var(--gm)';
+    inner.style.background  = 'var(--gl)';
+  }
+
+  async function initierPaiement() {
+    const errEl = document.getElementById('pay-error');
+    errEl.style.display = 'none';
+
+    if (!moyenSelectionne) {
+      errEl.textContent = 'Veuillez choisir un moyen de paiement.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    const btnTxt     = document.getElementById('btn-payer-txt');
+    const btnLoading = document.getElementById('btn-payer-loading');
+    const btn        = document.getElementById('btn-payer');
+
+    btnTxt.style.display     = 'none';
+    btnLoading.style.display = 'inline-flex';
+    btn.disabled             = true;
+
+    try {
+      // 1. Appel backend → obtenir paymentToken
+      const resp = await fetch('/api/paiement/init', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          demandeDevisId: DEMANDE_ID,
+          montant:        MONTANT,
+          moyenPaiement:  moyenSelectionne
+        })
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        throw new Error(data.erreur || 'Erreur serveur');
+      }
+
+      // 2. Ouvrir la popup CinetPay Seamless
+      CinetPaySeamless.open({
+        paymentToken: data.paymentToken,
+        paymentUrl:   data.paymentUrl,
+
+        onPaymentSuccess: function(result) {
+          document.querySelector('.card:last-of-type')?.remove();
+          document.getElementById('success-panel').style.display = 'block';
+          document.getElementById('success-msg').textContent =
+            'Paiement de ' + MONTANT + ' XOF confirmé. ' +
+            'Votre traduction vous sera livrée sous 24–48h ouvrées.';
+        },
+
+        onPaymentFailed: function(result) {
+          errEl.textContent = 'Paiement refusé. Veuillez réessayer ou choisir un autre moyen de paiement.';
+          errEl.style.display = 'block';
+        }
+      });
+
+    } catch (err) {
+      errEl.textContent = err.message || 'Erreur inattendue. Veuillez réessayer.';
+      errEl.style.display = 'block';
+    } finally {
+      btnTxt.style.display     = 'inline';
+      btnLoading.style.display = 'none';
+      btn.disabled             = false;
+    }
+  }
+</script>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .payment-option > div:hover {
+    border-color: var(--gm) !important;
+    background: var(--gl) !important;
+  }
+</style>
+
+</body>
+</html>

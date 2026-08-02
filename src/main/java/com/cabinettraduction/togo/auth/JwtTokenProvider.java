@@ -16,15 +16,14 @@ import io.jsonwebtoken.security.Keys;
 /**
  * Génération et validation des tokens JWT (HS256).
  *
- * <p>Génerer un secret aléatoire sûr en local :
- * <pre>
+ * <p>
+ * Génerer un secret aléatoire sûr en local : <pre>
  *   # PowerShell
  *   [System.Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(64))
  *
  *   # Linux/macOS
  *   openssl rand -base64 64
- * </pre>
- * Stocker la valeur dans la variable d'environnement {@code JWT_SECRET}.
+ * </pre> Stocker la valeur dans la variable d'environnement {@code JWT_SECRET}.
  */
 @Component
 public class JwtTokenProvider {

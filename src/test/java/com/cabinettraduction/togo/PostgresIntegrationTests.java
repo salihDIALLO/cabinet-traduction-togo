@@ -33,8 +33,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.DockerClientFactory;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = { "spring.docker.compose.skip.in-tests=false",
-		"spring.docker.compose.start.arguments=--force-recreate,--renew-anon-volumes,postgres" })
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+		properties = { "spring.docker.compose.skip.in-tests=false",
+				"spring.docker.compose.start.arguments=--force-recreate,--renew-anon-volumes,postgres" })
 @ActiveProfiles("postgres")
 @DisabledInNativeImage
 public class PostgresIntegrationTests {
@@ -54,8 +55,7 @@ public class PostgresIntegrationTests {
 	}
 
 	public static void main(String[] args) {
-		new SpringApplicationBuilder(CabinetTraductionApplication.class)
-			.profiles("postgres")
+		new SpringApplicationBuilder(CabinetTraductionApplication.class).profiles("postgres")
 			.properties("spring.docker.compose.start.arguments=postgres")
 			.listeners(new PropertiesLogger())
 			.run(args);

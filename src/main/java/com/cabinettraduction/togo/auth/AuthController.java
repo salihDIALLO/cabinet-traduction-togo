@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.Data;
 
 /**
- * Endpoint d'authentification back-office.
- * POST /api/auth/login — retourne un JWT signé (validité 8h).
+ * Endpoint d'authentification back-office. POST /api/auth/login — retourne un JWT signé
+ * (validité 8h).
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -29,8 +29,8 @@ public class AuthController {
 
 	private final JwtTokenProvider tokenProvider;
 
-	public AuthController(UtilisateurRepository utilisateurRepository,
-			PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
+	public AuthController(UtilisateurRepository utilisateurRepository, PasswordEncoder passwordEncoder,
+			JwtTokenProvider tokenProvider) {
 		this.utilisateurRepository = utilisateurRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.tokenProvider = tokenProvider;
@@ -45,11 +45,10 @@ public class AuthController {
 			throw new AuthException("Email ou mot de passe incorrect.");
 		}
 
-		String token = tokenProvider.creerToken(utilisateur.getEmail(),
-				utilisateur.getRole().name());
+		String token = tokenProvider.creerToken(utilisateur.getEmail(), utilisateur.getRole().name());
 
-		return ResponseEntity.ok(Map.of("token", token, "role", utilisateur.getRole().name(),
-				"email", utilisateur.getEmail()));
+		return ResponseEntity
+			.ok(Map.of("token", token, "role", utilisateur.getRole().name(), "email", utilisateur.getEmail()));
 	}
 
 	@org.springframework.web.bind.annotation.ExceptionHandler(AuthException.class)

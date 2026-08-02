@@ -20,8 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
- * Tests unitaires pour {@link DevisController}.
- * Vérifie les 3 scénarios clés sans démarrer le contexte Spring complet.
+ * Tests unitaires pour {@link DevisController}. Vérifie les 3 scénarios clés sans
+ * démarrer le contexte Spring complet.
  */
 @ExtendWith(MockitoExtension.class)
 class DevisControllerTest {
@@ -45,10 +45,10 @@ class DevisControllerTest {
 	void creerDevis_avecFichiersValides_retourne201() throws Exception {
 		when(devisService.creerDemande(any(), anyList())).thenReturn(42);
 
-		MockMultipartFile pdf1 = new MockMultipartFile(
-				"fichiers", "contrat.pdf", "application/pdf", "data-pdf".getBytes());
-		MockMultipartFile pdf2 = new MockMultipartFile(
-				"fichiers", "diplome.pdf", "application/pdf", "data-pdf".getBytes());
+		MockMultipartFile pdf1 = new MockMultipartFile("fichiers", "contrat.pdf", "application/pdf",
+				"data-pdf".getBytes());
+		MockMultipartFile pdf2 = new MockMultipartFile("fichiers", "diplome.pdf", "application/pdf",
+				"data-pdf".getBytes());
 
 		mockMvc
 			.perform(multipart("/api/devis").file(pdf1)
@@ -69,13 +69,12 @@ class DevisControllerTest {
 
 	@Test
 	void creerDevis_fichierTropGrand_retourne400() throws Exception {
-		doThrow(new FileValidationException(
-				"Le fichier 'gros.pdf' dépasse la taille maximale autorisée (10 Mo)."))
+		doThrow(new FileValidationException("Le fichier 'gros.pdf' dépasse la taille maximale autorisée (10 Mo)."))
 			.when(devisService)
 			.creerDemande(any(), anyList());
 
-		MockMultipartFile grosFichier = new MockMultipartFile(
-				"fichiers", "gros.pdf", "application/pdf", new byte[11 * 1024 * 1024]);
+		MockMultipartFile grosFichier = new MockMultipartFile("fichiers", "gros.pdf", "application/pdf",
+				new byte[11 * 1024 * 1024]);
 
 		mockMvc
 			.perform(multipart("/api/devis").file(grosFichier)
@@ -95,15 +94,13 @@ class DevisControllerTest {
 	@Test
 	void creerDevis_champManquant_retourne400() throws Exception {
 		// email absent
-		mockMvc.perform(multipart("/api/devis")
-				.param("nom", "Kofi Agbeko")
-				// email manquant intentionnellement
-				.param("telephone", "+22890123456")
-				.param("typeClient", "PARTICULIER")
-				.param("serviceId", "1")
-				.param("langueSource", "fr")
-				.param("langueCible", "en"))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(multipart("/api/devis").param("nom", "Kofi Agbeko")
+			// email manquant intentionnellement
+			.param("telephone", "+22890123456")
+			.param("typeClient", "PARTICULIER")
+			.param("serviceId", "1")
+			.param("langueSource", "fr")
+			.param("langueCible", "en")).andExpect(status().isBadRequest());
 	}
 
 	// ── Cas 5 : Plus de 5 fichiers → 400 ─────────────────────────────────────
@@ -112,14 +109,21 @@ class DevisControllerTest {
 	void creerDevis_tropDeFichiers_retourne400() throws Exception {
 		when(devisService.creerDemande(any(), anyList())).thenReturn(1);
 
-		MockMultipartFile f = new MockMultipartFile(
-				"fichiers", "doc.pdf", "application/pdf", "data".getBytes());
+		MockMultipartFile f = new MockMultipartFile("fichiers", "doc.pdf", "application/pdf", "data".getBytes());
 
-		mockMvc.perform(multipart("/api/devis")
-				.file(f).file(f).file(f).file(f).file(f).file(f) // 6 fichiers
-				.param("nom", "Test").param("email", "t@t.com")
-				.param("telephone", "+228").param("typeClient", "PARTICULIER")
-				.param("serviceId", "1").param("langueSource", "fr").param("langueCible", "en"))
+		mockMvc.perform(multipart("/api/devis").file(f)
+			.file(f)
+			.file(f)
+			.file(f)
+			.file(f)
+			.file(f) // 6 fichiers
+			.param("nom", "Test")
+			.param("email", "t@t.com")
+			.param("telephone", "+228")
+			.param("typeClient", "PARTICULIER")
+			.param("serviceId", "1")
+			.param("langueSource", "fr")
+			.param("langueCible", "en"))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.erreur").value(containsString("5")));
 	}
@@ -132,8 +136,8 @@ class DevisControllerTest {
 			.when(devisService)
 			.creerDemande(any(), anyList());
 
-		MockMultipartFile fichierExe = new MockMultipartFile(
-				"fichiers", "virus.exe", "application/octet-stream", "MZ".getBytes());
+		MockMultipartFile fichierExe = new MockMultipartFile("fichiers", "virus.exe", "application/octet-stream",
+				"MZ".getBytes());
 
 		mockMvc
 			.perform(multipart("/api/devis").file(fichierExe)
