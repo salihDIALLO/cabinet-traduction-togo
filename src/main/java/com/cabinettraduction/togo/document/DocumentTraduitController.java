@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cabinettraduction.togo.auth.UtilisateurRepository;
+import com.cabinettraduction.togo.config.DocumentStorageService;
 import com.cabinettraduction.togo.config.EmailService;
-import com.cabinettraduction.togo.config.S3StorageService;
 import com.cabinettraduction.togo.devis.DemandeDevis;
 import com.cabinettraduction.togo.devis.DemandeDevisRepository;
 import com.cabinettraduction.togo.devis.FileValidationException;
@@ -59,7 +59,7 @@ public class DocumentTraduitController {
 
 	private final PaiementRepository paiementRepository;
 
-	private final S3StorageService s3StorageService;
+	private final DocumentStorageService s3StorageService;
 
 	private final FileValidationService fileValidationService;
 
@@ -75,7 +75,7 @@ public class DocumentTraduitController {
 	public DocumentTraduitController(DemandeDevisRepository demandeDevisRepository,
 			DocumentTraduitRepository documentTraduitRepository,
 			PaiementRepository paiementRepository,
-			S3StorageService s3StorageService,
+			DocumentStorageService s3StorageService,
 			FileValidationService fileValidationService,
 			EmailService emailService,
 			UtilisateurRepository utilisateurRepository,

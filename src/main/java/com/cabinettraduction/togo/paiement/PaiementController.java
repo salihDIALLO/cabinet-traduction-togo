@@ -51,7 +51,7 @@ public class PaiementController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 
-		paiementService.traiterWebhook(payload);
+		paiementService.traiterNotification(payload);
 		return ResponseEntity.ok().build();
 	}
 

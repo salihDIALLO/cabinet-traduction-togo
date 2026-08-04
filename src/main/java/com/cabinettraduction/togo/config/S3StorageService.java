@@ -3,7 +3,10 @@ package com.cabinettraduction.togo.config;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,14 +19,20 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 /**
- * Service d'upload de fichiers vers Amazon S3 (AWS SDK v2).
+ * Implémentation S3 de {@link DocumentStorageService} (production).
  *
- * Deux chemins S3 :
- * - devis/{demandeId}/... → documents originaux soumis par le client
- * - translations/{demandeId}/... → traductions livrées par le traducteur
+ * Activée quand : app.storage.mode=s3 (valeur par défaut).
+ *
+ * Chemins S3 :
+ * - devis/{demandeId}/...             → documents originaux du client
+ * - translations/{demandeId}/...      → traductions intermédiaires
+ * - documents-traduits/{demandeId}/... → documents traduits finaux livrés
  */
 @Service
-public class S3StorageService {
+@ConditionalOnProperty(name = "app.storage.mode", havingValue = "s3", matchIfMissing = true)
+public class S3StorageService implements DocumentStorageService {
+
+	private static final Logger log = LoggerFactory.getLogger(S3StorageService.class);
 
 	private final S3Client s3Client;
 
@@ -43,12 +52,11 @@ public class S3StorageService {
 
 		this.s3Client = S3Client.builder().region(awsRegion).credentialsProvider(creds).build();
 		this.s3Presigner = S3Presigner.builder().region(awsRegion).credentialsProvider(creds).build();
+
+		log.info("S3StorageService initialisé — région={}", region);
 	}
 
-	/**
-	 * Upload un document original (soumis par le client).
-	 * Chemin S3 : devis/{demandeId}/{uuid}_{nomFichier}
-	 */
+	@Override
 	public String upload(MultipartFile file, Integer demandeId) throws IOException {
 		String key = "devis/%d/%s_%s".formatted(
 				demandeId, UUID.randomUUID(), sanitize(file.getOriginalFilename()));
@@ -56,10 +64,7 @@ public class S3StorageService {
 		return key;
 	}
 
-	/**
-	 * Upload une traduction livrée (par le traducteur).
-	 * Chemin S3 : translations/{demandeId}/{uuid}_{nomFichier}
-	 */
+	@Override
 	public String uploadTraduction(MultipartFile file, Integer demandeId) throws IOException {
 		String key = "translations/%d/%s_%s".formatted(
 				demandeId, UUID.randomUUID(), sanitize(file.getOriginalFilename()));
@@ -67,11 +72,7 @@ public class S3StorageService {
 		return key;
 	}
 
-	/**
-	 * Upload un document traduit (admin/éditeur, après paiement confirmé).
-	 * Chemin S3 : documents-traduits/{demandeId}/{uuid}_{nomFichier}
-	 * Préfixe distinct des documents originaux et des traductions brouillon.
-	 */
+	@Override
 	public String uploadTraduit(MultipartFile file, Integer demandeId) throws IOException {
 		String key = "documents-traduits/%d/%s_%s".formatted(
 				demandeId, UUID.randomUUID(), sanitize(file.getOriginalFilename()));
@@ -79,19 +80,22 @@ public class S3StorageService {
 		return key;
 	}
 
-	/**
-	 * Expose le S3Presigner pour générer des URLs pré-signées
-	 * (téléchargement sécurisé côté client).
-	 */
+	@Override
 	public S3Presigner getPresigner() {
 		return this.s3Presigner;
 	}
 
+	@Override
+	public boolean supportePresigne() {
+		return true;
+	}
+
+	/** Accès au client S3 brut si nécessaire (ex. suppressions). */
 	public S3Client getS3Client() {
 		return this.s3Client;
 	}
 
-	// ─── Privé ───────────────────────────────────────────────────────────────
+	// ── Privé ─────────────────────────────────────────────────────────────────
 
 	private void putObject(String key, MultipartFile file) throws IOException {
 		PutObjectRequest request = PutObjectRequest.builder()

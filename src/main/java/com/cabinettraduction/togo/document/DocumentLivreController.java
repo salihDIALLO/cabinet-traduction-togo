@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cabinettraduction.togo.config.S3StorageService;
+import com.cabinettraduction.togo.config.DocumentStorageService;
 import com.cabinettraduction.togo.devis.DemandeDevis;
 import com.cabinettraduction.togo.devis.DemandeDevisRepository;
 import com.cabinettraduction.togo.devis.StatutDemande;
@@ -57,7 +57,7 @@ public class DocumentLivreController {
 
 	private final DemandeDevisRepository demandeDevisRepository;
 
-	private final S3StorageService s3StorageService;
+	private final DocumentStorageService s3StorageService;
 
 	private final S3Presigner s3Presigner;
 
@@ -65,7 +65,7 @@ public class DocumentLivreController {
 	private String bucket;
 
 	public DocumentLivreController(DocumentLivreRepository documentLivreRepository,
-			DemandeDevisRepository demandeDevisRepository, S3StorageService s3StorageService,
+			DemandeDevisRepository demandeDevisRepository, DocumentStorageService s3StorageService,
 			S3Presigner s3Presigner) {
 		this.documentLivreRepository = documentLivreRepository;
 		this.demandeDevisRepository = demandeDevisRepository;

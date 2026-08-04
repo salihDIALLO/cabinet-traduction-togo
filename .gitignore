@@ -49,3 +49,6 @@ _site/
 
 # Variables d'environnement locales — NE JAMAIS COMMITTER
 .env
+
+# Stockage local dev (mode app.storage.mode=local)
+uploads-dev/

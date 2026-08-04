@@ -16,6 +16,9 @@ $env:MAIL_PASSWORD         = "dummy"
 $env:FEDAPAY_API_KEY       = "dummy"
 $env:FEDAPAY_WEBHOOK_SECRET= "dummy"
 $env:FEDAPAY_CALLBACK_URL  = "http://localhost:8080/paiement/retour"
+$env:MYSQL_URL              = "jdbc:mysql://127.0.0.1:3306/cabinet_traduction"
+$env:MYSQL_USER             = "root"
+$env:MYSQL_PASS             = ""
 
 # CinetPay (Flooz / Yass / Moov Money)
 # Obtenir vos clés sur : https://sandbox.cinetpay.com → Paramètres → Clés API
@@ -28,8 +31,12 @@ $env:CINETPAY_RETURN_URL    = "http://localhost:8080/paiement/retour"
 # URL de base (liens dans les emails)
 $env:APP_BASE_URL           = "http://localhost:8080"
 
+# Mode stockage local pour le dev (pas besoin d'AWS S3)
+# Les fichiers vont dans uploads-dev/ à la racine du projet
+$env:APP_STORAGE_MODE       = "local"
+
 Write-Host "Cabinet Traduction Togo - Mode DEV" -ForegroundColor Green
 Write-Host "http://localhost:8080" -ForegroundColor Cyan
 Write-Host ""
 
-.\mvnw.cmd spring-boot:run "-Dspring-javaformat.skip=true"
+.\mvnw.cmd spring-boot:run "-Dspring-javaformat.skip=true" "-Dspring-boot.run.profiles=mysql" "-Dspring-boot.run.arguments=--spring.flyway.enabled=true --spring.sql.init.mode=never --app.storage.mode=local"

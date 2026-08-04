@@ -15,47 +15,46 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
-import com.cabinettraduction.togo.config.S3StorageService;
+import com.cabinettraduction.togo.config.DocumentStorageService;
 
 /**
  * Service de téléchargement sécurisé des documents traduits.
  *
- * Responsabilités :
- * 1. Générer un token UUID (24h) lié à un DocumentTraduit
- * 2. Valider un token reçu et générer une URL pré-signée S3 (15 min)
- * 3. Marquer le token comme utilisé (usage unique optionnel)
+ * Utilise {@link DocumentStorageService} (pas S3StorageService directement)
+ * pour être compatible avec le mode local dev.
  *
- * L'URL pré-signée n'est jamais loggée, jamais stockée en base.
+ * Deux modes selon l'implémentation active :
+ * - S3 (prod)   : génère une URL pré-signée AWS (15 min) → redirection HTTP 302
+ * - Local (dev) : génère une URL /uploads-dev/** servie par LocalFileController
  */
 @Service
 public class TelechargementService {
 
 	private static final Logger log = LoggerFactory.getLogger(TelechargementService.class);
 
-	/** Durée de validité du token email (lien dans l'email au client). */
 	private static final Duration DUREE_TOKEN = Duration.ofHours(24);
 
-	/** Durée de validité de l'URL pré-signée S3 (après clic sur le lien). */
 	private static final Duration DUREE_PRESIGNEE = Duration.ofMinutes(15);
 
 	private final TokenTelechargementRepository tokenRepository;
 
-	private final S3StorageService s3StorageService;
+	private final DocumentStorageService storageService;
 
-	@Value("${cloud.aws.s3.bucket}")
+	@Value("${cloud.aws.s3.bucket:dummy-bucket}")
 	private String bucket;
 
+	@Value("${app.base-url:http://localhost:8080}")
+	private String baseUrl;
+
 	public TelechargementService(TokenTelechargementRepository tokenRepository,
-			S3StorageService s3StorageService) {
+			DocumentStorageService storageService) {
 		this.tokenRepository = tokenRepository;
-		this.s3StorageService = s3StorageService;
+		this.storageService = storageService;
 	}
 
 	/**
-	 * Crée un token de téléchargement pour un document traduit.
-	 * Appelé après l'upload admin (DocumentTraduitController).
-	 *
-	 * @return la valeur UUID du token (à insérer dans le lien email)
+	 * Crée un token de téléchargement valable 24h pour un document traduit.
+	 * @return la valeur UUID à insérer dans le lien email
 	 */
 	@Transactional
 	public String creerToken(DocumentTraduit document) {
@@ -76,17 +75,15 @@ public class TelechargementService {
 	}
 
 	/**
-	 * Valide le token et génère une URL pré-signée S3 (15 min).
+	 * Valide le token et retourne l'URL de téléchargement.
 	 *
-	 * Lève {@link TokenInvalideException} si :
-	 * - token inconnu en base
-	 * - token expiré
-	 * - token déjà utilisé
-	 * - token ne correspond pas à la demandeId du path
+	 * - Mode S3    : URL pré-signée AWS (jamais loggée), expire dans 15 min
+	 * - Mode local : URL directe /uploads-dev/{cle} servie par LocalFileController
 	 *
-	 * @param tokenValeur valeur UUID reçue en query param
+	 * @param tokenValeur UUID reçu en query param
 	 * @param demandeId   id de la demande dans le path URL
-	 * @return URL pré-signée S3 — à utiliser pour la redirection HTTP 302
+	 * @return URL vers laquelle rediriger le client (HTTP 302)
+	 * @throws TokenInvalideException si le token est invalide, expiré ou incohérent
 	 */
 	@Transactional
 	public String validerEtGenererUrl(String tokenValeur, Integer demandeId) {
@@ -100,38 +97,49 @@ public class TelechargementService {
 		}
 
 		if (token.isUtilise()) {
-			throw new TokenInvalideException("Ce lien a déjà été utilisé. Contactez le cabinet.");
+			throw new TokenInvalideException(
+					"Ce lien a déjà été utilisé. Contactez le cabinet.");
 		}
 
 		if (token.estExpire()) {
-			throw new TokenInvalideException("Ce lien a expiré (validité 24h). Contactez le cabinet.");
+			throw new TokenInvalideException(
+					"Ce lien a expiré (validité 24h). Contactez le cabinet.");
 		}
 
 		DocumentTraduit document = token.getDocumentTraduit();
-		String cleS3 = document.getCheminS3();
+		String cle = document.getCheminS3();
 
-		// Générer l'URL pré-signée S3 (15 min) — jamais loggée
-		S3Presigner presigner = s3StorageService.getPresigner();
+		// ── Mode S3 (production) ──────────────────────────────────────────────
+		if (storageService.supportePresigne()) {
+			S3Presigner presigner = storageService.getPresigner();
 
-		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-			.bucket(bucket)
-			.key(cleS3)
-			.responseContentDisposition(
-					"attachment; filename=\"" + sanitize(document.getNomFichier()) + "\"")
-			.build();
+			GetObjectRequest req = GetObjectRequest.builder()
+				.bucket(bucket)
+				.key(cle)
+				.responseContentDisposition(
+						"attachment; filename=\"" + sanitize(document.getNomFichier()) + "\"")
+				.build();
 
-		GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-			.signatureDuration(DUREE_PRESIGNEE)
-			.getObjectRequest(getObjectRequest)
-			.build();
+			GetObjectPresignRequest presignReq = GetObjectPresignRequest.builder()
+				.signatureDuration(DUREE_PRESIGNEE)
+				.getObjectRequest(req)
+				.build();
 
-		PresignedGetObjectRequest presigned = presigner.presignGetObject(presignRequest);
+			PresignedGetObjectRequest presigned = presigner.presignGetObject(presignReq);
 
-		// Ne pas logger l'URL (contient la signature AWS)
-		log.info("URL pré-signée générée — demandeId={}, documentId={}, expireDans=15min",
-				demandeId, document.getId());
+			// URL pré-signée jamais loggée (contient la signature AWS)
+			log.info("URL pré-signée générée (S3) — demandeId={}, documentId={}, expireDans=15min",
+					demandeId, document.getId());
 
-		return presigned.url().toString();
+			return presigned.url().toString();
+		}
+
+		// ── Mode local (dev) ──────────────────────────────────────────────────
+		// Servi par LocalFileController sur GET /uploads-dev/{cle}
+		String urlLocale = baseUrl + "/uploads-dev/" + cle;
+		log.info("URL locale générée (dev) — demandeId={}, documentId={}", demandeId,
+				document.getId());
+		return urlLocale;
 	}
 
 	private String sanitize(String name) {

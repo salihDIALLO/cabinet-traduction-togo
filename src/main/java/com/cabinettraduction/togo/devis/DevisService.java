@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.cabinettraduction.togo.client.Client;
 import com.cabinettraduction.togo.client.ClientRepository;
+import com.cabinettraduction.togo.config.DocumentStorageService;
 import com.cabinettraduction.togo.config.EmailService;
-import com.cabinettraduction.togo.config.S3StorageService;
 import com.cabinettraduction.togo.service.Service;
 import com.cabinettraduction.togo.service.ServiceRepository;
 
@@ -31,15 +31,17 @@ public class DevisService {
 
 	private final DocumentJointRepository documentJointRepository;
 
-	private final S3StorageService s3;
+	private final DocumentStorageService s3;
 
 	private final EmailService emailService;
 
 	private final FileValidationService fileValidationService;
 
 	public DevisService(ClientRepository clientRepository, ServiceRepository serviceRepository,
-			DemandeDevisRepository demandeDevisRepository, DocumentJointRepository documentJointRepository,
-			S3StorageService s3, EmailService emailService, FileValidationService fileValidationService) {
+			DemandeDevisRepository demandeDevisRepository,
+			DocumentJointRepository documentJointRepository,
+			DocumentStorageService s3, EmailService emailService,
+			FileValidationService fileValidationService) {
 		this.clientRepository = clientRepository;
 		this.serviceRepository = serviceRepository;
 		this.demandeDevisRepository = demandeDevisRepository;
