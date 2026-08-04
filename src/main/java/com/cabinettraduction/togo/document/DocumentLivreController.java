@@ -1,7 +1,6 @@
 package com.cabinettraduction.togo.document;
 
 import java.io.IOException;
-import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -31,20 +30,10 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 /**
- * Gestion de la livraison des documents traduits.
+ * Livraison de documents traduits (route legacy conservée).
  *
- * Flux complet :
- * 1. Traducteur (ADMIN/EDITEUR) uploade la traduction :
- *    POST /admin/documents/{demandeId}/livrer
- *    → Fichier stocké sur S3 dans translations/{demandeId}/
- *    → Statut demande → LIVREE
- *
- * 2. Client (authentifié) télécharge son document traduit :
- *    GET /api/documents/{documentId}/telecharger
- *    → Retourne une URL pré-signée S3 valable 15 minutes
- *
- * 3. Admin liste les documents d'une demande :
- *    GET /admin/documents/{demandeId}
+ * Utilise {@link DocumentStorageService} pour être compatible avec
+ * le mode local dev — pas d'injection directe de S3Presigner.
  */
 @RestController
 public class DocumentLivreController {
@@ -57,29 +46,21 @@ public class DocumentLivreController {
 
 	private final DemandeDevisRepository demandeDevisRepository;
 
-	private final DocumentStorageService s3StorageService;
+	private final DocumentStorageService storageService;
 
-	private final S3Presigner s3Presigner;
-
-	@Value("${cloud.aws.s3.bucket}")
+	@Value("${cloud.aws.s3.bucket:dummy-bucket}")
 	private String bucket;
 
 	public DocumentLivreController(DocumentLivreRepository documentLivreRepository,
-			DemandeDevisRepository demandeDevisRepository, DocumentStorageService s3StorageService,
-			S3Presigner s3Presigner) {
+			DemandeDevisRepository demandeDevisRepository,
+			DocumentStorageService storageService) {
 		this.documentLivreRepository = documentLivreRepository;
 		this.demandeDevisRepository = demandeDevisRepository;
-		this.s3StorageService = s3StorageService;
-		this.s3Presigner = s3Presigner;
+		this.storageService = storageService;
 	}
 
 	// ─── POST /admin/documents/{demandeId}/livrer ─────────────────────────────
 
-	/**
-	 * Le traducteur livre un document traduit.
-	 * Multipart : fichier + notes (optionnel).
-	 * Nécessite le rôle ADMIN ou EDITEUR.
-	 */
 	@PostMapping("/admin/documents/{demandeId}/livrer")
 	@PreAuthorize("hasAnyRole('ADMIN','EDITEUR')")
 	public ResponseEntity<?> livrerDocument(@PathVariable Integer demandeId,
@@ -89,10 +70,8 @@ public class DocumentLivreController {
 		DemandeDevis demande = demandeDevisRepository.findById(demandeId)
 			.orElseThrow(() -> new IllegalArgumentException("Demande introuvable : " + demandeId));
 
-		// Upload vers S3 dans le dossier translations/
-		String cleS3 = s3StorageService.uploadTraduction(fichier, demandeId);
+		String cleS3 = storageService.uploadTraduction(fichier, demandeId);
 
-		// Enregistrer en base
 		DocumentLivre doc = new DocumentLivre();
 		doc.setDemandeDevis(demande);
 		doc.setNomFichier(fichier.getOriginalFilename());
@@ -102,23 +81,19 @@ public class DocumentLivreController {
 		doc.setNotesTraducteur(notes);
 		documentLivreRepository.save(doc);
 
-		// Passer la demande en LIVREE
 		demande.setStatut(StatutDemande.LIVREE);
 		demandeDevisRepository.save(demande);
 
-		log.info("Document livré — demande #{}, fichier: {}, clé S3: {}",
-				demandeId, fichier.getOriginalFilename(), cleS3);
+		log.info("Document livré — demande #{}, fichier={}, clé={}", demandeId,
+				fichier.getOriginalFilename(), cleS3);
 
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(Map.of("documentId", doc.getId(), "nomFichier", doc.getNomFichier(),
-					"statut", "LIVREE", "message", "Document livré avec succès."));
+			.body(Map.of("documentId", doc.getId(), "nomFichier", doc.getNomFichier(), "statut",
+					"LIVREE", "message", "Document livré avec succès."));
 	}
 
 	// ─── GET /admin/documents/{demandeId} ────────────────────────────────────
 
-	/**
-	 * Liste les documents livrés pour une demande.
-	 */
 	@GetMapping("/admin/documents/{demandeId}")
 	@PreAuthorize("hasAnyRole('ADMIN','EDITEUR')")
 	public ResponseEntity<List<DocumentLivre>> listerDocumentsLivres(@PathVariable Integer demandeId) {
@@ -128,43 +103,43 @@ public class DocumentLivreController {
 	// ─── GET /api/documents/{documentId}/telecharger ─────────────────────────
 
 	/**
-	 * Génère une URL pré-signée S3 valable 15 minutes pour le client.
-	 * Le client doit être authentifié (JWT).
-	 *
-	 * Retourne :
-	 * {
-	 *   "url": "https://s3.amazonaws.com/...?X-Amz-Signature=...",
-	 *   "nomFichier": "traduction-acte-naissance.pdf",
-	 *   "expireInMinutes": 15
-	 * }
+	 * Génère une URL de téléchargement pour un document livré.
+	 * En mode S3 : URL pré-signée (15 min).
+	 * En mode local : URL directe /uploads-dev/...
 	 */
 	@GetMapping("/api/documents/{documentId}/telecharger")
 	public ResponseEntity<?> telechargerDocument(@PathVariable Integer documentId) {
 		DocumentLivre doc = documentLivreRepository.findById(documentId)
-			.orElseThrow(() -> new IllegalArgumentException("Document introuvable : " + documentId));
+			.orElseThrow(
+					() -> new IllegalArgumentException("Document introuvable : " + documentId));
 
-		// Incrémenter le compteur de téléchargements
 		doc.setNbTelechargements(doc.getNbTelechargements() + 1);
 		documentLivreRepository.save(doc);
 
-		// Générer l'URL pré-signée S3
-		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-			.bucket(bucket)
-			.key(doc.getCheminS3())
-			.build();
+		String url;
 
-		GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-			.signatureDuration(URL_PRESIGNEE_DUREE)
-			.getObjectRequest(getObjectRequest)
-			.build();
+		if (storageService.supportePresigne()) {
+			S3Presigner presigner = storageService.getPresigner();
+			GetObjectRequest req = GetObjectRequest.builder()
+				.bucket(bucket)
+				.key(doc.getCheminS3())
+				.build();
+			GetObjectPresignRequest presignReq = GetObjectPresignRequest.builder()
+				.signatureDuration(URL_PRESIGNEE_DUREE)
+				.getObjectRequest(req)
+				.build();
+			// URL pré-signée jamais loggée
+			url = presigner.presignGetObject(presignReq).url().toString();
+			log.info("URL pré-signée (S3) — document #{}", documentId);
+		}
+		else {
+			// Mode local dev
+			url = "/uploads-dev/" + doc.getCheminS3();
+			log.info("URL locale (dev) — document #{}", documentId);
+		}
 
-		URL urlPresignee = s3Presigner.presignGetObject(presignRequest).url();
-
-		log.info("URL pré-signée générée — document #{}, téléchargement #{}", documentId,
-				doc.getNbTelechargements());
-
-		return ResponseEntity.ok(Map.of("url", urlPresignee.toString(), "nomFichier",
-				doc.getNomFichier(), "expireInMinutes", URL_PRESIGNEE_DUREE.toMinutes()));
+		return ResponseEntity.ok(Map.of("url", url, "nomFichier", doc.getNomFichier(),
+				"expireInMinutes", URL_PRESIGNEE_DUREE.toMinutes()));
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
