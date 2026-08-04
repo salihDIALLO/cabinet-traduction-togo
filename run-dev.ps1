@@ -16,7 +16,7 @@ $env:MAIL_PASSWORD         = "dummy"
 $env:FEDAPAY_API_KEY       = "dummy"
 $env:FEDAPAY_WEBHOOK_SECRET= "dummy"
 $env:FEDAPAY_CALLBACK_URL  = "http://localhost:8080/paiement/retour"
-$env:MYSQL_URL              = "jdbc:mysql://127.0.0.1:3306/cabinet_traduction"
+$env:MYSQL_URL              = "jdbc:mysql://localhost:3306/cabinet_traduction?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
 $env:MYSQL_USER             = "root"
 $env:MYSQL_PASS             = ""
 
@@ -39,4 +39,4 @@ Write-Host "Cabinet Traduction Togo - Mode DEV" -ForegroundColor Green
 Write-Host "http://localhost:8080" -ForegroundColor Cyan
 Write-Host ""
 
-.\mvnw.cmd spring-boot:run "-Dspring-javaformat.skip=true" "-Dspring-boot.run.profiles=mysql" "-Dspring-boot.run.arguments=--spring.flyway.enabled=true --spring.sql.init.mode=never --app.storage.mode=local"
+.\mvnw.cmd spring-boot:run "-Dspring-javaformat.skip=true" "-Dspring-boot.run.profiles=mysql" "-Dspring-boot.run.arguments=--spring.sql.init.mode=never --app.storage.mode=local"
