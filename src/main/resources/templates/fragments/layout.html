@@ -49,9 +49,11 @@
         </ul>
 
         <ul class="navbar-nav me-auto">
-          <li th:replace="~{::menuItem ('/',          'home',  #{nav.home},     #{nav.home})}"></li>
-          <li th:replace="~{::menuItem ('/devis',     'devis', #{nav.devis},    #{nav.devis})}"></li>
-          <li th:replace="~{::menuItem ('/vets.html', 'vets',  #{nav.services}, #{nav.services})}"></li>
+          <li th:replace="~{::menuItem ('/',          'home',      #{nav.home},     #{nav.home})}"></li>
+          <li th:replace="~{::menuItem ('/services',  'services',  #{nav.services}, #{nav.services})}"></li>
+          <li th:replace="~{::menuItem ('/devis',     'devis',     #{nav.devis},    #{nav.devis})}"></li>
+          <li th:replace="~{::menuItem ('/a-propos',  'a-propos',  'À propos',      'À propos')}"></li>
+          <li th:replace="~{::menuItem ('/contact',   'contact',   #{nav.contact},  #{nav.contact})}"></li>
         </ul>
 
         <!-- Sélecteur langue + CTA -->
@@ -110,8 +112,10 @@
           <ul style="list-style:none; line-height:2;">
             <li><a th:href="@{/}">Accueil</a></li>
             <li><a th:href="@{/devis}">Devis gratuit</a></li>
-            <li><a href="#">À propos</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a th:href="@{/services}">Services</a></li>
+            <li><a th:href="@{/a-propos}">À propos</a></li>
+            <li><a th:href="@{/contact}">Contact</a></li>
+            <li><a th:href="@{/mentions-legales}" th:text="#{footer.legal}">Mentions légales</a></li>
           </ul>
         </div>
 
@@ -132,7 +136,7 @@
         &copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span>
         <span th:text="#{site.name}">Cabinet Traduction Togo</span> —
         <span th:text="#{footer.rights}">Tous droits réservés</span>
-        · <a href="#" th:text="#{footer.legal}">Mentions légales</a>
+        · <a th:href="@{/mentions-legales}" th:text="#{footer.legal}">Mentions légales</a>
       </div>
     </div>
   </footer>

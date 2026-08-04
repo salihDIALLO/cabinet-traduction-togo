@@ -549,3 +549,56 @@ footer a:hover { color: var(--gm); }
   .services-section, .why-section, .docs-section { padding: 2.5rem 0; }
   .stat-number { font-size: 2rem; }
 }
+
+/* ── Alertes manquantes ──────────────────────────────────────── */
+.alert-err {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  border-radius: 8px;
+  padding: .7rem 1rem;
+  font-size: .85rem;
+  line-height: 1.5;
+}
+.alert-ok {
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  border-radius: 8px;
+  padding: .7rem 1rem;
+  font-size: .85rem;
+}
+.alert-warn {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  border-radius: 8px;
+  padding: .7rem 1rem;
+  font-size: .85rem;
+}
+
+/* ── Footer liens ───────────────────────────────────────────── */
+footer .footer-divider { border-color: rgba(255,255,255,.1); margin: 1.5rem 0; }
+footer .footer-bottom  { font-size:.75rem; color:rgba(255,255,255,.4); text-align:center; }
+footer a               { color:rgba(255,255,255,.65); text-decoration:none; transition:var(--tr); }
+footer a:hover         { color:var(--gm); }
+footer h5              { font-family:var(--fd); color:#fff; font-size:1.05rem; margin-bottom:.9rem; }
+
+/* ── Formulaire devis : .form-field + .invalid-feedback ───────── */
+.form-field { margin-bottom: .9rem; }
+.form-field .invalid-feedback {
+  display: none;
+  color: var(--red);
+  font-size: .78rem;
+  margin-top: .25rem;
+}
+.form-control-ct.is-invalid + .invalid-feedback,
+.form-control-ct.is-invalid ~ .invalid-feedback { display: block; }
+.form-control-ct.is-invalid { border-color: var(--red); }
+.form-control-ct.is-valid   { border-color: var(--gm); }
+
+/* ── Page paiement : options ─────────────────────────────────── */
+.payment-option > div:hover {
+  border-color: var(--gm) !important;
+  background: var(--gl) !important;
+}

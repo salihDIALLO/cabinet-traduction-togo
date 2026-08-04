@@ -51,7 +51,9 @@ public class SecurityConfig {
 			// ── Règles d'autorisation ──
 			.authorizeHttpRequests(auth -> auth
 				// ── Pages publiques du site ──
-				.requestMatchers(HttpMethod.GET, "/", "/devis", "/devis/**")
+				.requestMatchers(HttpMethod.GET,
+						"/", "/devis", "/devis/**",
+						"/services", "/a-propos", "/contact", "/mentions-legales")
 				.permitAll()
 				// ── Page paiement publique ──
 				.requestMatchers("/paiement/**")

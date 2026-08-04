@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'a-propos')}">
+<body>
+
+<section style="background:var(--gk);color:#fff;padding:3.5rem 0 2.5rem;text-align:center;">
+  <div class="container">
+    <div class="section-tag"
+         style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);display:inline-flex;">
+      🏛️ À propos
+    </div>
+    <h1 class="section-title" style="color:#fff;margin-top:.5rem;">
+      Le Cabinet de Traduction<br>
+      <em style="font-style:normal;background:linear-gradient(90deg,#7bde6e,#a8f3a0);
+                 -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+        Certifiée du Togo
+      </em>
+    </h1>
+  </div>
+</section>
+
+<section style="padding:4.5rem 0;background:#fff;">
+  <div class="container">
+    <div class="row align-items-center g-5 mb-5">
+      <div class="col-12 col-lg-6">
+        <div class="section-tag">Notre histoire</div>
+        <h2 class="section-title">Experts en traduction<br>au service du Togo</h2>
+        <p style="color:var(--tm);line-height:1.75;margin-bottom:1rem;">
+          Fondé à Lomé, notre cabinet accompagne depuis plusieurs années les particuliers,
+          étudiants, entreprises et ONG dans leurs démarches administratives, juridiques
+          et académiques nécessitant des traductions certifiées.
+        </p>
+        <p style="color:var(--tm);line-height:1.75;">
+          Nos traducteurs sont certifiés et assermentés auprès des tribunaux togolais,
+          garantissant la reconnaissance officielle de chaque document traduit auprès
+          des ambassades, universités et administrations du monde entier.
+        </p>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="stat-box">
+              <div class="stat-number" data-count="500">0</div>
+              <div class="stat-label">Clients satisfaits</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-box">
+              <div class="stat-number" data-count="5">0</div>
+              <div class="stat-label">Ans d'expérience</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-box">
+              <div class="stat-number" data-count="10">0</div>
+              <div class="stat-label">Langues</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-box">
+              <div class="stat-number">4.9★</div>
+              <div class="stat-label">Note Google</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Valeurs -->
+    <div class="text-center mb-5">
+      <div class="section-tag">Nos valeurs</div>
+      <h2 class="section-title">Ce qui nous distingue</h2>
+    </div>
+    <div class="row g-3 mb-5">
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="why-card">
+          <div class="why-ico">🎯</div>
+          <div>
+            <h4>Excellence</h4>
+            <p>Chaque traduction est vérifiée par un second traducteur avant livraison.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="why-card">
+          <div class="why-ico">🔒</div>
+          <div>
+            <h4>Confidentialité</h4>
+            <p>Vos documents personnels sont traités avec la plus stricte discrétion.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="why-card">
+          <div class="why-ico">⚡</div>
+          <div>
+            <h4>Rapidité</h4>
+            <p>Devis en 30 minutes. Livraison express disponible sous 24 heures.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="why-card">
+          <div class="why-ico">🤝</div>
+          <div>
+            <h4>Accompagnement</h4>
+            <p>Nous vous guidons dans toutes vos démarches administratives.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container">
+    <h2>Prêt à nous faire confiance ?</h2>
+    <p>Demandez votre devis gratuit — réponse garantie en 30 minutes</p>
+    <a th:href="@{/devis}" class="btn-hero-primary">
+      🚀 <span th:text="#{home.hero.cta}">Demander un devis gratuit</span>
+    </a>
+  </div>
+</section>
+
+<script>
+document.querySelectorAll('.stat-number[data-count]').forEach(function(el) {
+  var target = parseInt(el.dataset.count), start = 0;
+  var step = Math.ceil(target / 50);
+  var timer = setInterval(function() {
+    start = Math.min(start + step, target);
+    el.textContent = start + '+';
+    if (start >= target) clearInterval(timer);
+  }, 25);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'contact')}">
+<body>
+
+<section style="background:var(--gk);color:#fff;padding:3rem 0 2rem;text-align:center;">
+  <div class="container">
+    <div class="section-tag" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);display:inline-flex;">
+      📞 Contact
+    </div>
+    <h1 class="section-title" style="color:#fff;margin-top:.5rem;">
+      Nous contacter
+    </h1>
+    <p style="color:rgba(255,255,255,.75);max-width:540px;margin:0 auto;">
+      Notre équipe répond en moins de 30 minutes du lundi au samedi.
+    </p>
+  </div>
+</section>
+
+<section style="padding:4rem 0;background:#fff;">
+  <div class="container">
+    <div class="row g-5">
+
+      <!-- Coordonnées -->
+      <div class="col-12 col-lg-5">
+        <h3 style="font-family:var(--fd);font-size:1.6rem;font-weight:700;margin-bottom:1.5rem;">Nos coordonnées</h3>
+
+        <div class="why-card mb-3">
+          <div class="why-ico">📍</div>
+          <div>
+            <h4>Adresse</h4>
+            <p th:text="#{footer.address}">Lomé, Togo</p>
+          </div>
+        </div>
+
+        <div class="why-card mb-3">
+          <div class="why-ico">📞</div>
+          <div>
+            <h4>Téléphone</h4>
+            <p><a th:href="'tel:' + #{footer.phone}" th:text="#{footer.phone}"
+                  style="color:var(--gd);font-weight:700;text-decoration:none;">+228 XX XX XX XX</a></p>
+          </div>
+        </div>
+
+        <div class="why-card mb-3">
+          <div class="why-ico">✉️</div>
+          <div>
+            <h4>Email</h4>
+            <p><a th:href="'mailto:' + #{footer.email}" th:text="#{footer.email}"
+                  style="color:var(--gd);font-weight:700;text-decoration:none;">contact@cabinet-traduction.tg</a></p>
+          </div>
+        </div>
+
+        <div class="why-card mb-3">
+          <div class="why-ico">🕐</div>
+          <div>
+            <h4>Horaires</h4>
+            <p>Lun–Sam : 8h–18h<br>Urgences 24h/24 via WhatsApp</p>
+          </div>
+        </div>
+
+        <a href="https://wa.me/228XXXXXXXX?text=Bonjour, je souhaite vous contacter."
+           target="_blank" rel="noopener noreferrer"
+           class="btn-hero-wa" style="margin-top:1rem; display:inline-flex;">
+          💬 Écrire sur WhatsApp
+        </a>
+      </div>
+
+      <!-- Formulaire de contact rapide -->
+      <div class="col-12 col-lg-7">
+        <h3 style="font-family:var(--fd);font-size:1.6rem;font-weight:700;margin-bottom:1.5rem;">
+          Envoyer un message
+        </h3>
+        <div class="devis-card">
+          <form action="/api/devis" method="get" onsubmit="return false;">
+
+            <div class="form-field">
+              <label class="form-label-ct">Votre nom complet</label>
+              <input type="text" class="form-control-ct" placeholder="Kofi Mensah">
+            </div>
+
+            <div class="form-field">
+              <label class="form-label-ct">Adresse email</label>
+              <input type="email" class="form-control-ct" placeholder="kofi@example.com">
+            </div>
+
+            <div class="form-field">
+              <label class="form-label-ct">Objet</label>
+              <input type="text" class="form-control-ct" placeholder="Demande d'information...">
+            </div>
+
+            <div class="form-field">
+              <label class="form-label-ct">Message</label>
+              <textarea class="form-control-ct" rows="5"
+                        placeholder="Décrivez votre besoin..."
+                        style="resize:vertical;"></textarea>
+            </div>
+
+            <div class="d-flex gap-3 flex-wrap" style="margin-top:1.5rem;">
+              <button type="submit" class="btn-submit-ct">
+                📨 Envoyer le message
+              </button>
+              <a th:href="@{/devis}" class="btn-prev-ct" style="display:inline-flex;align-items:center;">
+                📋 Demander un devis
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

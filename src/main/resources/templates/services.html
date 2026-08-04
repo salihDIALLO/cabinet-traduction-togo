@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'services')}">
+<body>
+
+<!-- ── HERO SERVICES ──────────────────────────────────────── -->
+<section style="background:var(--gk); color:#fff; padding:3.5rem 0 2.5rem; text-align:center;">
+  <div class="container">
+    <div class="section-tag" style="display:inline-flex; background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.2);">
+      🏆 Nos Services
+    </div>
+    <h1 class="section-title" style="color:#fff; margin-top:.5rem;">
+      Traduction Certifiée<br>
+      <em style="font-style:normal; background:linear-gradient(90deg,#7bde6e,#a8f3a0);
+                 -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+        reconnue partout dans le monde
+      </em>
+    </h1>
+    <p style="color:rgba(255,255,255,.75); max-width:600px; margin:0 auto 2rem;">
+      Ambassades, universités, préfectures, notaires — tous nos services sont assurés
+      par des traducteurs certifiés et assermentés auprès des autorités togolaises.
+    </p>
+    <a th:href="@{/devis}" class="btn-hero-primary">
+      🚀 <span th:text="#{home.hero.cta}">Demander un devis gratuit</span>
+    </a>
+  </div>
+</section>
+
+<!-- ── SERVICES DÉTAILLÉS ─────────────────────────────────── -->
+<section style="padding:4.5rem 0; background:#fff;">
+  <div class="container">
+
+    <!-- Traduction Certifiée -->
+    <div class="row align-items-center g-5 mb-5">
+      <div class="col-12 col-lg-6">
+        <div class="service-ico" style="width:64px;height:64px;font-size:2rem;margin-bottom:1.25rem;">📜</div>
+        <div class="section-tag">Service #1</div>
+        <h2 class="section-title" th:text="#{service.TRADUCTION_CERTIFIEE}">Traduction Certifiée</h2>
+        <p class="section-subtitle mb-3" th:text="#{service.TRADUCTION_CERTIFIEE.desc}">
+          Documents administratifs et juridiques officiels.
+        </p>
+        <ul style="list-style:none; padding:0; line-height:2.2; font-size:.9rem; color:var(--t);">
+          <li>✅ Actes d'état civil (naissance, mariage, décès)</li>
+          <li>✅ Diplômes et relevés de notes</li>
+          <li>✅ Documents pour ambassades USA, Canada, France, Allemagne</li>
+          <li>✅ Campus France, bourses d'études</li>
+          <li>✅ Contrats et documents juridiques</li>
+        </ul>
+        <div style="margin-top:1.25rem;">
+          <span class="service-price" style="font-size:.95rem; padding:.35rem .9rem;"
+                th:text="#{service.TRADUCTION_CERTIFIEE.price}">À partir de 5 000 XOF</span>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div style="background:var(--off); border-radius:16px; padding:2rem; border:1px solid var(--gl);">
+          <h5 style="font-weight:800; margin-bottom:1rem; color:var(--t);">Documents acceptés</h5>
+          <div class="row g-2">
+            <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">🎓</div><div><div class="doc-chip-name">Diplômes</div></div></div></div>
+            <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">📋</div><div><div class="doc-chip-name">Acte de naissance</div></div></div></div>
+            <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">🛂</div><div><div class="doc-chip-name">Passeport</div></div></div></div>
+            <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">⚖️</div><div><div class="doc-chip-name">Casier judiciaire</div></div></div></div>
+            <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">🏦</div><div><div class="doc-chip-name">Attestation bancaire</div></div></div></div>
+            <div class="col-6"><div class="doc-chip"><div class="doc-chip-ico">📝</div><div><div class="doc-chip-name">Contrats</div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--gl); margin-bottom:4rem;">
+
+    <!-- Traduction Assermentée -->
+    <div class="row align-items-center g-5 mb-5 flex-lg-row-reverse">
+      <div class="col-12 col-lg-6">
+        <div class="service-ico" style="width:64px;height:64px;font-size:2rem;margin-bottom:1.25rem;">⚖️</div>
+        <div class="section-tag">Service #2</div>
+        <h2 class="section-title" th:text="#{service.TRADUCTION_ASSERMENTEE}">Traduction Assermentée</h2>
+        <p class="section-subtitle mb-3" th:text="#{service.TRADUCTION_ASSERMENTEE.desc}">
+          Traducteurs assermentés auprès des tribunaux togolais.
+        </p>
+        <ul style="list-style:none; padding:0; line-height:2.2; font-size:.9rem; color:var(--t);">
+          <li>✅ Procédures judiciaires et notariales</li>
+          <li>✅ Préfectures et administrations publiques</li>
+          <li>✅ Documents pour demandes de nationalité</li>
+          <li>✅ Actes authentiques officiels</li>
+        </ul>
+        <div style="margin-top:1.25rem;">
+          <span class="service-price" style="font-size:.95rem; padding:.35rem .9rem;"
+                th:text="#{service.TRADUCTION_ASSERMENTEE.price}">À partir de 8 000 XOF</span>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div style="background:var(--gl); border-radius:16px; padding:2rem; text-align:center;">
+          <div style="font-size:4rem; margin-bottom:.75rem;">🏛️</div>
+          <p style="font-size:.9rem; color:var(--gd); font-weight:700; line-height:1.6;">
+            Reconnu par tous les tribunaux<br>et administrations du Togo
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--gl); margin-bottom:4rem;">
+
+    <!-- Interprétation -->
+    <div class="row align-items-center g-5 mb-5">
+      <div class="col-12 col-lg-6">
+        <div class="service-ico" style="width:64px;height:64px;font-size:2rem;margin-bottom:1.25rem;">🎙️</div>
+        <div class="section-tag">Service #3</div>
+        <h2 class="section-title" th:text="#{service.INTERPRETATION}">Interprétation</h2>
+        <p class="section-subtitle mb-3" th:text="#{service.INTERPRETATION.desc}">
+          Interprétation consécutive et simultanée.
+        </p>
+        <ul style="list-style:none; padding:0; line-height:2.2; font-size:.9rem; color:var(--t);">
+          <li>✅ Conférences internationales</li>
+          <li>✅ Réunions d'affaires et négociations</li>
+          <li>✅ Audiences judiciaires</li>
+          <li>✅ Formations et séminaires</li>
+        </ul>
+        <div style="margin-top:1.25rem;">
+          <span class="service-price" style="font-size:.95rem; padding:.35rem .9rem;"
+                th:text="#{service.INTERPRETATION.price}">Sur devis</span>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div style="background:var(--off); border-radius:16px; padding:2rem; border:1px solid var(--gl);">
+          <h5 style="font-weight:800; margin-bottom:1rem; color:var(--t);">Langues disponibles</h5>
+          <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
+            <span style="background:var(--gl);color:var(--gd);padding:.3rem .75rem;border-radius:20px;font-size:.82rem;font-weight:700;">🇫🇷 Français</span>
+            <span style="background:var(--gl);color:var(--gd);padding:.3rem .75rem;border-radius:20px;font-size:.82rem;font-weight:700;">🇬🇧 Anglais</span>
+            <span style="background:var(--gl);color:var(--gd);padding:.3rem .75rem;border-radius:20px;font-size:.82rem;font-weight:700;">🇩🇪 Allemand</span>
+            <span style="background:var(--gl);color:var(--gd);padding:.3rem .75rem;border-radius:20px;font-size:.82rem;font-weight:700;">🇪🇸 Espagnol</span>
+            <span style="background:var(--gl);color:var(--gd);padding:.3rem .75rem;border-radius:20px;font-size:.82rem;font-weight:700;">🇸🇦 Arabe</span>
+            <span style="background:var(--gl);color:var(--gd);padding:.3rem .75rem;border-radius:20px;font-size:.82rem;font-weight:700;">🇹🇬 Éwé · Mina</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CTA BAND ────────────────────────────────────────────── -->
+<section class="cta-band">
+  <div class="container">
+    <h2>Quel service vous convient ?<br>
+      <em style="font-style:normal;color:#7bde6e;">Obtenez votre devis en 30 minutes.</em>
+    </h2>
+    <p>Gratuit · Sans engagement · Expert certifié vous répond</p>
+    <a th:href="@{/devis}" class="btn-hero-primary">
+      🚀 <span th:text="#{home.hero.cta}">Demander un devis gratuit</span>
+    </a>
+  </div>
+</section>
+
+</body>
+</html>

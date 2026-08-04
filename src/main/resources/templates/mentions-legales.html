@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout (~{::body},'home')}">
+<body>
+
+<div class="container" style="padding:3rem 0 5rem;">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-9">
+
+      <div class="section-tag">⚖️ Légal</div>
+      <h1 class="section-title" style="margin-bottom:2rem;">Mentions légales</h1>
+
+      <div class="devis-card">
+
+        <h4 style="font-weight:800;margin-bottom:.75rem;color:var(--t);">Éditeur du site</h4>
+        <p style="color:var(--tm);line-height:1.75;margin-bottom:1.5rem;">
+          Cabinet de Traduction Certifiée et Interprétation<br>
+          Lomé, Togo<br>
+          Email : <a th:href="'mailto:' + #{footer.email}" th:text="#{footer.email}"
+                     style="color:var(--gd);">contact@cabinet-traduction.tg</a><br>
+          Téléphone : <span th:text="#{footer.phone}">+228 XX XX XX XX</span>
+        </p>
+
+        <h4 style="font-weight:800;margin-bottom:.75rem;color:var(--t);">Hébergement</h4>
+        <p style="color:var(--tm);line-height:1.75;margin-bottom:1.5rem;">
+          Amazon Web Services (AWS) — Lightsail<br>
+          Région : Europe (Paris) eu-west-3
+        </p>
+
+        <h4 style="font-weight:800;margin-bottom:.75rem;color:var(--t);">Propriété intellectuelle</h4>
+        <p style="color:var(--tm);line-height:1.75;margin-bottom:1.5rem;">
+          L'ensemble du contenu de ce site (textes, images, traductions, code) est
+          protégé par le droit d'auteur. Toute reproduction sans autorisation écrite
+          préalable est interdite.
+        </p>
+
+        <h4 style="font-weight:800;margin-bottom:.75rem;color:var(--t);">Données personnelles</h4>
+        <p style="color:var(--tm);line-height:1.75;margin-bottom:1.5rem;">
+          Les données collectées via le formulaire de devis (nom, email, téléphone,
+          documents) sont utilisées uniquement pour répondre à votre demande.
+          Elles ne sont jamais transmises à des tiers sans votre consentement.
+          Vous disposez d'un droit d'accès, de rectification et de suppression de
+          vos données. Pour l'exercer, contactez-nous par email.
+        </p>
+
+        <h4 style="font-weight:800;margin-bottom:.75rem;color:var(--t);">Cookies</h4>
+        <p style="color:var(--tm);line-height:1.75;">
+          Ce site n'utilise pas de cookies de tracking ou publicitaires.
+          Seules des données de session nécessaires au fonctionnement du site
+          peuvent être stockées temporairement.
+        </p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
