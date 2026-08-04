@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.PathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -73,7 +73,7 @@ public class LocalFileController {
 			.contentType(MediaType.parseMediaType(contentType))
 			.header(HttpHeaders.CONTENT_DISPOSITION,
 					"attachment; filename=\"" + nomFichier + "\"")
-			.body(new PathResource(fichier));
+			.body(new FileSystemResource(fichier));
 	}
 
 }
