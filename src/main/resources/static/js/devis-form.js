@@ -194,7 +194,7 @@
           const waLink = document.getElementById('whatsapp-suivi');
           if (waLink) {
             const msg = encodeURIComponent('Bonjour, je souhaite suivre ma demande #' + data.id);
-            waLink.href = 'https://wa.me/228XXXXXXXX?text=' + msg;
+            waLink.href = 'https://wa.me/221779078419?text=' + msg;
           }
 
           // Scroll vers succès
